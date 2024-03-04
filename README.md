@@ -1,1 +1,1 @@
-# devoxx-2024
+# Workshop fp-ts
