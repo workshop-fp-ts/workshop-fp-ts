@@ -1,1 +1,1 @@
-# Workshop fp-ts
+# Awesome Workshop fp-ts
