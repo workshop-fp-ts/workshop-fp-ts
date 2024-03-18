@@ -1,3 +1,4 @@
+import * as A from "fp-ts/Array";
 import * as E from "fp-ts/Either";
 import * as O from "fp-ts/Option";
 import { pipe } from "fp-ts/function";
@@ -120,20 +121,7 @@ describe("Either", () => {
     expect(getValue(E.left("another error"))).toEqual(-1);
   });
 
-  it.skip("You can extract a value, providing a default value in case of left", () => {
-    // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
-
-    const getValue = (n: E.Either<string, number>) => pipe(n, TO_REPLACE);
-
-    // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
-
-    expect(getValue(E.right(2))).toEqual(2);
-    expect(getValue(E.right(17))).toEqual(17);
-    expect(getValue(E.left("error"))).toEqual(-1);
-    expect(getValue(E.left("another error"))).toEqual(-1);
-  });
-
-  it.skip("You can flatten Eithers", () => {
+  it.skip("You can flatten nested Eithers", () => {
     const keepOnlyEven = E.fromPredicate(
       (n: number) => n % 2 === 0,
       () => "Not a multiple of 2"
@@ -157,78 +145,95 @@ describe("Either", () => {
   });
 });
 
-/**
- * combinators
+describe("Advanced exercises", () => {
+  type UserCreationDto = { username: string; email: string; age: number };
 
-    tap
+  const hasValidEmail = (user: UserCreationDto): boolean =>
+    user.email.includes("@");
 
-    ✓ left 
-    ✓ of
-    ✓ right
+  const isUnderage = (user: UserCreationDto) => user.age < 18;
 
-    ✓ fromNullable
-    ✓ fromOption
+  it.skip("Obtain the desired value by using all functions", () => {
+    const validateUsername = (user: UserCreationDto) =>
+      pipe(
+        user,
+        E.fromPredicate(
+          (user) => user.username.length > 3,
+          () => "invalid_username"
+        )
+      );
 
-error handling
+    // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    alt
-    ✓ getOrElse
-    ✓ map
-    ✓ mapLeft
-    orElse
-    
-filtering
+    const validateUser = (user: UserCreationDto) => {
+      // TODO
+    };
 
-    filterOrElse
-    filterOrElseW
+    // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
-folding
+    expect(
+      validateUser({
+        username: "Richard",
+        email: "richardgmail.com",
+        age: 18,
+      })
+    ).toEqual(E.left("invalid_email"));
 
-    reduce
+    expect(
+      validateUser({
+        username: "Jo",
+        email: "jo@gmail.com",
+        age: 20,
+      })
+    ).toEqual(E.left("invalid_username"));
 
+    expect(
+      validateUser({
+        username: "Jordy",
+        email: "jo@gmail.com",
+        age: 12,
+      })
+    ).toEqual(E.left("underage"));
+  });
 
-interop
+  it.skip("Advanced exercise: this one is more difficult!", () => {
+    const validateEmail = E.fromPredicate(
+      (user: UserCreationDto) => user.email.includes("@"),
+      () => ["invalid_email"]
+    );
 
-    tryCatch
-    tryCatchK
+    const validateOverage = E.fromPredicate(
+      (user: UserCreationDto) => user.age >= 18,
+      () => ["underage"]
+    );
 
-lifting
+    const validateUsername = E.fromPredicate(
+      (user: UserCreationDto) => user.username.length > 3,
+      () => ["invalid_username"]
+    );
 
-    ✓ fromPredicate
+    // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-mapping
+    const validateUser = (user: UserCreationDto) => {
+      // TODO
+    };
 
-    as
-    asUnit
-    bimap
-    flap
-    ✓ map
+    // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
-model
+    expect(
+      validateUser({
+        username: "Richard",
+        email: "richardgmail.com",
+        age: 18,
+      })
+    ).toEqual(E.left(["invalid_email"]));
 
-    ✓ Either (type alias)
-    ✓ Left (interface)
-    ✓ Right (interface)
-
-pattern matching
-
-    match
-    matchW
-
-refinements
-
-    isLeft
-    isRight
-
-sequencing
-
-    ✓ flatMap
-    ✓ flatten
-
-
-utils
-
-    toError
-
-
- */
+    expect(
+      validateUser({
+        username: "Jo",
+        email: "jogmail.com",
+        age: 12,
+      })
+    ).toEqual(E.left(["invalid_email", "invalid_username", "underage"]));
+  });
+});
