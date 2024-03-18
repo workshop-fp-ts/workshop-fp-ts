@@ -24,11 +24,30 @@ import { TO_REPLACE } from "./utils";
  *
  */
 
-describe("Option", () => {
-  it("You can create options of the none type", () => {
-    const result = O.none;
+// none OK
+// some OK
+// fromNullable OK
+// fromPredicate OK
+// getOrElse OK
+// getOrEleseW OK
+// match/fold OK
+// map OK
+// filter OK
+// filterMap OK
+// compact ?
+// reduce ?
+// reduceRight ?
+// toNullable ?
+// toUndefined ?
+// partition ?
+// ADVANCED (after either)
+// partitionMap ?
 
-    expect(result._tag).toEqual("None");
+describe("Option", () => {
+  it.skip("You can create options of the none type", () => {
+    const result = TO_REPLACE;
+
+    expect((result as any)._tag).toEqual("None");
   });
 
   it.skip("You can create options of the some type", () => {
@@ -104,7 +123,7 @@ describe("Option", () => {
     const evenNumber = 2;
     const oddNumber = 3;
     const isEven = (x: number) => x % 2 === 0;
-    const ifNone = () => "not even";
+    const onNone = () => "not even";
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 

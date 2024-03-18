@@ -14,6 +14,18 @@ import { TO_REPLACE } from "./utils";
  *
  */
 
+// fromEntries OK
+// toEntries / toArray OK
+// map OK
+// filter OK
+// flap OK
+// filterMap ?
+// reduce ?
+// reduceRight ?
+// partition ?
+// partitionMap ?
+// separate ?
+
 describe("Record", () => {
   it.skip("You can build a record from entries", () => {
     const entries: [string, number][] = [
@@ -125,7 +137,7 @@ describe("Record", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const fn = (x: number) => TO_REPLACE;
+    const fn = (x: number) => pipe(record, TO_REPLACE);
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
