@@ -55,11 +55,13 @@ describe("Option", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const resultFromTruthy = pipe(input, TO_REPLACE);
-    const resultFromNull = pipe(null, TO_REPLACE);
-    const resultFromUndefined = pipe(undefined, TO_REPLACE);
+    const fn = (x: any) => pipe(x, TO_REPLACE);
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
+
+    const resultFromTruthy = fn(input);
+    const resultFromNull = fn(null);
+    const resultFromUndefined = fn(undefined);
 
     expect(resultFromTruthy._tag).toEqual("Some");
     expect(resultFromNull._tag).toEqual("None");
@@ -73,10 +75,12 @@ describe("Option", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const resultFromEvenNumber = pipe(evenNumber, TO_REPLACE);
-    const resultFromOddNumber = pipe(oddNumber, TO_REPLACE);
+    const fn = (x: number) => pipe(x, TO_REPLACE);
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
+
+    const resultFromEvenNumber = fn(evenNumber);
+    const resultFromOddNumber = fn(oddNumber);
 
     expect(resultFromEvenNumber._tag).toEqual("Some");
     expect(resultFromOddNumber._tag).toEqual("None");
@@ -90,13 +94,33 @@ describe("Option", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const resultFromEvenNumber = pipe(2, TO_REPLACE, TO_REPLACE);
-    const resultFromOddNumber = pipe(3, TO_REPLACE, TO_REPLACE);
+    const fn = (x: number) => pipe(x, O.fromPredicate(isEven), TO_REPLACE);
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
+    const resultFromEvenNumber = fn(2);
+    const resultFromOddNumber = fn(3);
+
     expect(resultFromEvenNumber).toEqual(2);
     expect(resultFromOddNumber).toEqual(999);
+  });
+  it.skip("You can extract a value in case of Some, providing a default value in case of None, and they may be of different types", () => {
+    const evenNumber = 2;
+    const oddNumber = 3;
+    const isEven = (x: number) => x % 2 === 0;
+    const ifNone = () => "not even";
+
+    // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
+
+    const fn = (x: number) => pipe(x, O.fromPredicate(isEven), TO_REPLACE);
+
+    // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
+
+    const resultFromEvenNumber = fn(2);
+    const resultFromOddNumber = fn(3);
+
+    expect(resultFromEvenNumber).toEqual(2);
+    expect(resultFromOddNumber).toEqual("not even");
   });
 
   it.skip("You can extract a value and transform it on the fly in case of Some, providing a default value in case of None", () => {
@@ -108,12 +132,81 @@ describe("Option", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const resultFromEvenNumber = pipe(2, TO_REPLACE, TO_REPLACE);
-    const resultFromOddNumber = pipe(3, TO_REPLACE, TO_REPLACE);
+    const fn = (x: number) => pipe(x, O.fromPredicate(isEven), TO_REPLACE);
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
+    const resultFromEvenNumber = fn(2);
+    const resultFromOddNumber = fn(3);
+
     expect(resultFromEvenNumber).toEqual(`even value: 4`);
     expect(resultFromOddNumber).toEqual(`not an even value`);
+  });
+  it.skip("You can map values", () => {
+    const evenNumber = 2;
+    const oddNumber = 3;
+    const isEven = (x: number) => x % 2 === 0;
+    const onNone = () => `not an even value`;
+    const onSome = (i: number) => `even value: ${i}`;
+
+    // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
+
+    const fn = (x: number) =>
+      pipe(x, O.fromPredicate(isEven), TO_REPLACE, O.match(onNone, onSome));
+
+    // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
+
+    const resultFromEvenNumber = fn(2);
+    const resultFromOddNumber = fn(3);
+
+    expect(resultFromEvenNumber).toEqual(`even value: _4_`);
+    expect(resultFromOddNumber).toEqual(`not an even value`);
+  });
+  it.skip("You can filter values", () => {
+    const isPositive = (x: number) => x >= 0;
+
+    // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
+
+    const fn = (x: number) =>
+      pipe(
+        O.some(1),
+        TO_REPLACE,
+        O.getOrElse(() => 0)
+      );
+
+    // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
+
+    const resultFromPositiveNumber = fn(1);
+    const resultFromNegativeNumber = fn(-1);
+
+    expect(resultFromPositiveNumber).toEqual(1);
+    expect(resultFromNegativeNumber).toEqual(`not an even value`);
+  });
+  it.skip("You can filter and map", () => {
+    const isZeroOrLess = (x: number) => x <= 0;
+
+    const doDividePieOfSize = (total: number) => (x: number) =>
+      isZeroOrLess(x) ? O.none : O.some(total / x);
+
+    const divideBy = doDividePieOfSize(4);
+
+    // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
+
+    const fn = (x: number) =>
+      pipe(
+        O.some(x),
+        TO_REPLACE,
+        O.getOrElse(() => 0)
+      );
+
+    // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
+
+    const halfPie = fn(2);
+    const quarterPie = fn(4);
+    const impossibleSlice = fn(-1);
+
+    expect(halfPie).toEqual(2);
+    expect(quarterPie).toEqual(1);
+    expect(impossibleSlice).toEqual(0);
   });
 });
