@@ -34,14 +34,14 @@ import { TO_REPLACE } from "./utils";
 // map OK
 // filter OK
 // filterMap OK
-// compact ?
-// reduce ?
-// reduceRight ?
-// toNullable ?
-// toUndefined ?
-// partition ?
+// compact (optional)
+// reduce (optional)
+// reduceRight (optional)
+// toNullable (optional)
+// toUndefined (optional)
+// partition (optional)
 // ADVANCED (after either)
-// partitionMap ?
+// partitionMap (optional)
 
 describe("Option", () => {
   it.skip("You can create options of the none type", () => {
