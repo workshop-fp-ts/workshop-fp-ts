@@ -196,6 +196,8 @@ describe("Advanced exercises", () => {
     ).toEqual(E.left("underage"));
   });
 
+  it.skip("OPTION'S PARTITIONMAP", () => {}); // TODO
+
   it.skip("Advanced exercise: this one is more difficult!", () => {
     const validateEmail = E.fromPredicate(
       (user: UserCreationDto) => user.email.includes("@"),
