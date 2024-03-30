@@ -93,21 +93,6 @@ describe("Either", () => {
     expect(onlyEvenNumbers(5)).toEqual(E.left("5 is not even"));
   });
 
-  it.skip("With E.fromPredicate, you can conditionnaly create a Left or a Right", () => {
-    const isEven = (i: number) => i % 2 === 0;
-
-    // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
-
-    const onlyEvenNumbers = (n: number) => pipe(n, TO_REPLACE);
-
-    // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
-
-    expect(onlyEvenNumbers(2)).toEqual(E.right(2));
-    expect(onlyEvenNumbers(8)).toEqual(E.right(8));
-    expect(onlyEvenNumbers(1)).toEqual(E.left("1 is not even"));
-    expect(onlyEvenNumbers(5)).toEqual(E.left("5 is not even"));
-  });
-
   it.skip("You can extract a value, providing a default value in case of left", () => {
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
