@@ -6,7 +6,7 @@ import { TO_REPLACE } from "./utils";
 /**
  * https://gcanti.github.io/fp-ts/modules/Option.ts.html
  *
- * Option (or Maybe) represents a possibler absence of data
+ * Option (or Maybe) represents a possible absence of data
  *
  * type Option<T> = Some<T> | None;
  *
@@ -66,15 +66,13 @@ describe("Option", () => {
   });
 
   it.skip("You can build an option from a possibly nullish value", () => {
-    const input = 42;
-
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
     const fn = (x: any) => pipe(x, TO_REPLACE);
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
-    const resultFromTruthy = fn(input);
+    const resultFromTruthy = fn(42);
     const resultFromNull = fn(null);
     const resultFromUndefined = fn(undefined);
 
@@ -84,8 +82,6 @@ describe("Option", () => {
   });
 
   it.skip("You can conditionally build a Some or None according to a predicate", () => {
-    const evenNumber = 2;
-    const oddNumber = 3;
     const isEven = (x: number) => x % 2 === 0;
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
@@ -94,16 +90,14 @@ describe("Option", () => {
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
-    const resultFromEvenNumber = fn(evenNumber);
-    const resultFromOddNumber = fn(oddNumber);
+    const resultFromEvenNumber = fn(2);
+    const resultFromOddNumber = fn(3);
 
     expect(resultFromEvenNumber._tag).toEqual("Some");
     expect(resultFromOddNumber._tag).toEqual("None");
   });
 
   it.skip("You can extract a value in case of Some, providing a default value in case of None", () => {
-    const evenNumber = 2;
-    const oddNumber = 3;
     const isEven = (x: number) => x % 2 === 0;
     const ifNone = () => 999;
 
@@ -119,9 +113,8 @@ describe("Option", () => {
     expect(resultFromEvenNumber).toEqual(2);
     expect(resultFromOddNumber).toEqual(999);
   });
+
   it.skip("You can extract a value in case of Some, providing a default value in case of None, and they may be of different types", () => {
-    const evenNumber = 2;
-    const oddNumber = 3;
     const isEven = (x: number) => x % 2 === 0;
     const onNone = () => "not even";
 
@@ -139,8 +132,6 @@ describe("Option", () => {
   });
 
   it.skip("You can extract a value and transform it on the fly in case of Some, providing a default value in case of None", () => {
-    const evenNumber = 2;
-    const oddNumber = 3;
     const isEven = (x: number) => x % 2 === 0;
     const onNone = () => `not an even value`;
     const onSome = (i: number) => `even value: ${i}`;
@@ -154,15 +145,16 @@ describe("Option", () => {
     const resultFromEvenNumber = fn(2);
     const resultFromOddNumber = fn(3);
 
-    expect(resultFromEvenNumber).toEqual(`even value: 4`);
+    expect(resultFromEvenNumber).toEqual(`even value: 2`);
     expect(resultFromOddNumber).toEqual(`not an even value`);
   });
+
   it.skip("You can map values", () => {
     const evenNumber = 2;
     const oddNumber = 3;
     const isEven = (x: number) => x % 2 === 0;
     const onNone = () => `not an even value`;
-    const onSome = (i: number) => `even value: ${i}`;
+    const onSome = (i: string) => `even value: ${i}`;
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
@@ -174,9 +166,10 @@ describe("Option", () => {
     const resultFromEvenNumber = fn(2);
     const resultFromOddNumber = fn(3);
 
-    expect(resultFromEvenNumber).toEqual(`even value: _4_`);
+    expect(resultFromEvenNumber).toEqual(`even value: _2_`);
     expect(resultFromOddNumber).toEqual(`not an even value`);
   });
+
   it.skip("You can filter values", () => {
     const isPositive = (x: number) => x >= 0;
 
@@ -184,7 +177,7 @@ describe("Option", () => {
 
     const fn = (x: number) =>
       pipe(
-        O.some(1),
+        O.some(x),
         TO_REPLACE,
         O.getOrElse(() => 0)
       );
@@ -195,8 +188,9 @@ describe("Option", () => {
     const resultFromNegativeNumber = fn(-1);
 
     expect(resultFromPositiveNumber).toEqual(1);
-    expect(resultFromNegativeNumber).toEqual(`not an even value`);
+    expect(resultFromNegativeNumber).toEqual(0);
   });
+
   it.skip("You can filter and map", () => {
     const isZeroOrLess = (x: number) => x <= 0;
 
