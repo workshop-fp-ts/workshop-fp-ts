@@ -34,6 +34,8 @@ import { TO_REPLACE, mockBooksApi, releaseBooksApiMock } from "./utils";
  * ```
  */
 
+type Author = { id: number; name: string };
+
 describe("Task", () => {
   beforeEach(() => {
     mockBooksApi();
@@ -70,7 +72,9 @@ describe("Task", () => {
 
   it.skip("More concrete example: wrapping fetch within a Task", () => {
     const getAuthorsTask = () =>
-      fetch("https://my-books-library.com/authors.json");
+      fetch("https://my-books-library.com/authors.json").then((response) =>
+        response.json()
+      );
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
@@ -81,12 +85,18 @@ describe("Task", () => {
     return expect(task()).resolves.toEqual(["Victor Hugo", "Robin Hobb"]);
   });
 
-  it.skip("Combining several tasks", () => {
-    const getAuthorsTask = () =>
-      fetch("https://my-books-library.com/authors.json");
+  it.skip("This one is a bit harder : combining several tasks", () => {
+    const getAuthorsTask = (): Promise<Author[]> =>
+      fetch("https://my-books-library.com/authors.json").then(
+        (response) => response.json() as any
+      );
 
-    const getAuthorBooks = (authorId: number) =>
-      fetch(`https://my-books-library.com/authors/${authorId}.json`);
+    const getAuthorBooks =
+      (authorId: number): T.Task<string[]> =>
+      () =>
+        fetch(`https://my-books-library.com/authors/${authorId}.json`).then(
+          (response) => response.json() as any
+        );
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 

@@ -1,16 +1,17 @@
-import { MockAgent, MockClient } from "undici";
+import { MockAgent, MockClient, setGlobalDispatcher } from "undici";
 
 export const TO_REPLACE = (_: any): any => {
-  throw new Error("Remove this function call, and make the test green");
+  throw new Error("Remove this and make the test green");
 };
 
 const mockAgent = new MockAgent();
 mockAgent.disableNetConnect();
-const mockClient = new MockClient("https://my-books-library.com", {
-  agent: mockAgent,
-});
+let mockClient;
 
 export const mockBooksApi = () => {
+  mockClient = new MockClient("https://my-books-library.com", {
+    agent: mockAgent,
+  });
   mockClient
     .intercept({
       path: "/authors.json",
@@ -35,6 +36,8 @@ export const mockBooksApi = () => {
     })
     .reply(200, ["L'Assassin royal", "Le Soldat chamane"])
     .times(1);
+
+  setGlobalDispatcher(mockClient);
 };
 
 export const releaseBooksApiMock = () => {
