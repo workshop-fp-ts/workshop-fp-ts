@@ -6,7 +6,7 @@ export const TO_REPLACE = (_: any): any => {
 
 const mockAgent = new MockAgent();
 mockAgent.disableNetConnect();
-const mockClient = new MockClient("https://my-book-library.com", {
+const mockClient = new MockClient("https://my-books-library.com", {
   agent: mockAgent,
 });
 

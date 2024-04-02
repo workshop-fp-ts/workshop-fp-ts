@@ -70,7 +70,7 @@ describe("Task", () => {
 
   it.skip("More concrete example: wrapping fetch within a Task", () => {
     const getAuthorsTask = () =>
-      fetch("https://my-book-library.com/authors.json");
+      fetch("https://my-books-library.com/authors.json");
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
@@ -83,11 +83,10 @@ describe("Task", () => {
 
   it.skip("Combining several tasks", () => {
     const getAuthorsTask = () =>
-      fetch("https://my-book-library.com/authors.json");
+      fetch("https://my-books-library.com/authors.json");
 
-    const getAuthorBooks = (authorId: number) => {
-      fetch(`https://my-book-library.com/authors/${authorId}.json`);
-    };
+    const getAuthorBooks = (authorId: number) =>
+      fetch(`https://my-books-library.com/authors/${authorId}.json`);
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
