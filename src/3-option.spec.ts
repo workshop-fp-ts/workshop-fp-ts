@@ -103,7 +103,7 @@ describe("Option", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const fn = (x: number) => pipe(x, O.fromPredicate(isEven), TO_REPLACE);
+    const fn = (x: number) => pipe(isEven(x) ? O.some(x) : O.none, TO_REPLACE);
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -120,7 +120,7 @@ describe("Option", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const fn = (x: number) => pipe(x, O.fromPredicate(isEven), TO_REPLACE);
+    const fn = (x: number) => pipe(isEven(x) ? O.some(x) : O.none, TO_REPLACE);
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -138,7 +138,7 @@ describe("Option", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const fn = (x: number) => pipe(x, O.fromPredicate(isEven), TO_REPLACE);
+    const fn = (x: number) => pipe(isEven(x) ? O.some(x) : O.none, TO_REPLACE);
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -150,8 +150,6 @@ describe("Option", () => {
   });
 
   it.skip("You can map values", () => {
-    const evenNumber = 2;
-    const oddNumber = 3;
     const isEven = (x: number) => x % 2 === 0;
     const onNone = () => `not an even value`;
     const onSome = (i: string) => `even value: ${i}`;
@@ -159,7 +157,7 @@ describe("Option", () => {
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
     const fn = (x: number) =>
-      pipe(x, O.fromPredicate(isEven), TO_REPLACE, O.match(onNone, onSome));
+      pipe(isEven(x) ? O.some(x) : O.none, TO_REPLACE, O.match(onNone, onSome));
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -171,13 +169,13 @@ describe("Option", () => {
   });
 
   it.skip("You can filter values", () => {
-    const isPositive = (x: number) => x >= 0;
+    const isEven = (x: number) => x % 2 === 0;
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
     const fn = (x: number) =>
       pipe(
-        O.some(x),
+        isEven(x) ? O.some(x) : O.none,
         TO_REPLACE,
         O.getOrElse(() => 0)
       );
