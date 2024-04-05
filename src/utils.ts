@@ -1,7 +1,7 @@
 import { MockAgent, MockClient, setGlobalDispatcher } from "undici";
 
 export const TO_REPLACE = (_: any): any => {
-  throw new Error("Remove this and make the test green");
+  throw new Error("Remove 'TO_REPLACE' and make the test green");
 };
 
 const mockAgent = new MockAgent();
