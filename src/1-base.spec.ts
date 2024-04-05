@@ -9,8 +9,8 @@ describe("Basics", () => {
   it("should process data with pipe", () => {
     const input = "20";
     const parseNumber = (raw: string) => parseInt(raw, 10);
-    const increment = (i: number) => i + 1;
-    const double = (i: number) => i * 2;
+
+    const result = parseNumber(input);
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
@@ -18,7 +18,7 @@ describe("Basics", () => {
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
-    expect(resultWithPipe).toEqual(42);
+    expect(resultWithPipe).toEqual(result);
   });
 
   it.skip("you can pipe as much as you want", () => {
@@ -27,20 +27,27 @@ describe("Basics", () => {
     const increment = (i: number) => i + 1;
     const double = (i: number) => i * 2;
 
+    const value = parseNumber(input);
+    const incrementedValue = increment(value);
+    const result = double(incrementedValue);
+
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
     const resultWithPipe = pipe(input, TO_REPLACE);
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
-    expect(resultWithPipe).toEqual(42);
+    expect(resultWithPipe).toEqual(result);
   });
 
-  it.skip("you can pipe as much as you want", () => {
+  it.skip("you can use lambda directly in your pipe", () => {
     const input = "20";
     const parseNumber = (raw: string) => parseInt(raw, 10);
-    const increment = (i: number) => i + 1;
     const double = (i: number) => i * 2;
+
+    const value = parseNumber(input);
+    const incrementedValue = value + 5;
+    const result = double(incrementedValue);
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
@@ -48,6 +55,6 @@ describe("Basics", () => {
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
-    expect(resultWithPipe).toEqual(42);
+    expect(resultWithPipe).toEqual(result);
   });
 });
