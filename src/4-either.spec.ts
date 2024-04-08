@@ -130,7 +130,7 @@ describe("Either", () => {
   });
 });
 
-describe("Advanced exercises", () => {
+describe("Either – Advanced exercises", () => {
   type UserCreationDto = { username: string; email: string; age: number };
 
   const hasValidEmail = (user: UserCreationDto): boolean =>

@@ -1,3 +1,4 @@
+import * as TE from "fp-ts/TaskEither";
 import * as T from "fp-ts/Task";
 import { pipe } from "fp-ts/function";
 import { fetch } from "undici";
@@ -71,9 +72,9 @@ describe("Task", () => {
   });
 
   it.skip("More concrete example: wrapping fetch within a Task", () => {
-    const getAuthorsTask = () =>
-      fetch("https://my-books-library.com/authors.json").then((response) =>
-        response.json()
+    const getAuthorsTask: T.Task<Author[]> = () =>
+      fetch("https://my-books-library.com/authors.json").then(
+        (response) => response.json() as any
       );
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
@@ -85,8 +86,33 @@ describe("Task", () => {
     return expect(task()).resolves.toEqual(["Victor Hugo", "Robin Hobb"]);
   });
 
-  it.skip("This one is a bit harder : combining several tasks", () => {
-    const getAuthorsTask = (): Promise<Author[]> =>
+  it.skip("Chaining tasks", () => {
+    const getFavoriteAuthorTask: T.Task<Author> = () =>
+      fetch("https://my-books-library.com/favorite.json").then(
+        (response) => response.json() as any
+      );
+
+    const getAuthorBooks =
+      (authorId: number): T.Task<string[]> =>
+      () =>
+        fetch(`https://my-books-library.com/authors/${authorId}.json`).then(
+          (response) => response.json() as any
+        );
+
+    // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
+
+    const favoriteAuthorWithBooks = pipe(getFavoriteAuthorTask, TO_REPLACE);
+
+    // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
+
+    return expect(favoriteAuthorWithBooks()).resolves.toEqual({
+      name: "Robin Hobb",
+      books: ["L'Assassin royal", "Le Soldat chamane"],
+    });
+  });
+
+  it.skip("Combining several tasks", () => {
+    const getAuthorsTask: T.Task<Author[]> = () =>
       fetch("https://my-books-library.com/authors.json").then(
         (response) => response.json() as any
       );
@@ -111,5 +137,56 @@ describe("Task", () => {
       },
       { name: "Robin Hobb", books: ["L'Assassin royal", "Le Soldat chamane"] },
     ]);
+  });
+});
+
+/**
+ * https://gcanti.github.io/fp-ts/modules/TaskEither.ts.html
+ *
+ * In the previous exercises, we've used the Task module in a wrong way: wrapping
+ * fetch() calls. This is wrong because a remote call can always fail:
+ * sometimes network connection is bad, sometimes the remote API is down, ...
+ * A Task cannot fail, so we would need to handle it and recover from the error:
+ *
+ * ```
+ * const getAuthorsTask: T.Task<Author[]> = () =>
+ *    fetch("https://my-books-library.com/authors.json")
+ *       .then((response) => response.json())
+ *       .catch(() => []);
+ * ```
+ *
+ * Sometimes we cannot recover and still need to handle or propagate the error. In these case,
+ * we will use a TaskEither instead, which is a Task returning an Either
+ *
+ * ```
+ * interface TaskEither<E, A> extends Task<Either<E, A>> {}
+ * ```
+ */
+describe("TaskEither", () => {
+  beforeEach(() => {
+    mockBooksApi();
+  });
+
+  afterEach(() => {
+    releaseBooksApiMock();
+  });
+
+  it.skip("Properly wrapping fetch within a TaskEither", async () => {
+    // ⬇⬇⬇⬇ Fix code here ⬇⬇⬇⬇
+
+    const getAuthorBooks = (authorId) => () =>
+      fetch(`https://my-books-library.com/authors/${authorId}.json`).then(
+        (response) => response.json() as any
+      );
+
+    // ⬆⬆⬆⬆ Fix code here ⬆⬆⬆⬆
+
+    await expect(getAuthorBooks(1)).resolves.toEqual(
+      TE.right(["Les Misérables", "Le Dernier Jour d'un condamné"])
+    );
+    await expect(getAuthorBooks(3)).resolves.toEqual(TE.left("NOT FOUND"));
+    await expect(getAuthorBooks("invalidId")).resolves.toEqual(
+      TE.left("BAD REQUEST")
+    );
   });
 });
