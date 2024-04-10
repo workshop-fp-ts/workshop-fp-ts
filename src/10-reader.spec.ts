@@ -1,3 +1,4 @@
+import * as RTE from "fp-ts/ReaderTaskEither";
 import * as A from "fp-ts/Array";
 import * as TE from "fp-ts/TaskEither";
 import { pipe } from "fp-ts/function";
@@ -38,37 +39,27 @@ describe("Reader", () => {
     };
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
-    // const fetchAuthors_Reader =
-    //   (
-    //     cursor: number
-    //   ): R.Reader<
-    //     Pick<Dependencies, "authorClient">,
-    //     TE.TaskEither<FetchError, Author[]>
-    //   > =>
-    //   ({ authorClient }) =>
-    //     pipe(
-    //       authorClient.getAll(),
-    //       TE.map(A.filter((author) => author.id > cursor))
-    //     );
-    // const persistAuthors_Reader =
-    //   (
-    //     authors: Author[]
-    //   ): R.Reader<
-    //     Pick<Dependencies, "authorRepository">,
-    //     TE.TaskEither<DatabaseError, Author[]>
-    //   > =>
-    //   ({ authorRepository }) =>
-    //     pipe(
-    //       authors,
-    //       A.map(authorRepository.upsert),
-    //       A.sequence(TE.ApplicativeSeq)
-    //     );
-    // const sync_Reader = (cursor: number) => (dependencies: Dependencies) =>
-    //   pipe(
-    //     R.of(dependencies),
-    //     R.bind("authors", fetchAuthors_Reader(cursor)),
-    //     R.flatMap((a) => TE.flatMap(persistAuthors_Reader))
-    //   );
+    const fetchAuthors_Reader =
+      (
+        cursor: number
+      ): RTE.ReaderTaskEither<Dependencies, FetchError, Author[]> =>
+      ({ authorClient }) =>
+        pipe(
+          authorClient.getAll(),
+          TE.map(A.filter((author) => author.id > cursor))
+        );
+    const persistAuthors_Reader =
+      (
+        authors: Author[]
+      ): RTE.ReaderTaskEither<Dependencies, DatabaseError, Author[]> =>
+      ({ authorRepository }) =>
+        pipe(
+          authors,
+          A.map(authorRepository.upsert),
+          A.sequence(TE.ApplicativeSeq)
+        );
+    const sync_Reader = (cursor: number) =>
+      pipe(fetchAuthors_Reader(cursor), RTE.flatMap(persistAuthors_Reader));
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
     // IOC
@@ -82,12 +73,12 @@ describe("Reader", () => {
     await program_PartialApplication();
     expect(fakeAuthorRepositoryData).toEqual([{ id: 2, name: "Robin Hobb" }]);
 
-    // resetFakeAuthorRepositoryData();
+    resetFakeAuthorRepositoryData();
 
-    // const program_Reader = sync_Reader(1);
-    // const program = pipe(dependencies, program_Reader);
-    // await program();
-    // expect(fakeAuthorRepositoryData).toEqual([{ id: 2, name: "Robin Hobb" }]);
+    const program_Reader = sync_Reader(1);
+    const program = pipe(dependencies, program_Reader);
+    await program();
+    expect(fakeAuthorRepositoryData).toEqual([{ id: 2, name: "Robin Hobb" }]);
   });
 });
 
