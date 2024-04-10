@@ -42,7 +42,11 @@ describe("Reader", () => {
     const fetchAuthors_Reader =
       (
         cursor: number
-      ): RTE.ReaderTaskEither<Dependencies, FetchError, Author[]> =>
+      ): RTE.ReaderTaskEither<
+        Pick<Dependencies, "authorClient">,
+        FetchError,
+        Author[]
+      > =>
       ({ authorClient }) =>
         pipe(
           authorClient.getAll(),
@@ -51,7 +55,11 @@ describe("Reader", () => {
     const persistAuthors_Reader =
       (
         authors: Author[]
-      ): RTE.ReaderTaskEither<Dependencies, DatabaseError, Author[]> =>
+      ): RTE.ReaderTaskEither<
+        Pick<Dependencies, "authorRepository">,
+        DatabaseError,
+        Author[]
+      > =>
       ({ authorRepository }) =>
         pipe(
           authors,
