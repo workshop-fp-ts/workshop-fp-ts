@@ -1,5 +1,6 @@
 import * as A from "fp-ts/Array";
 import * as E from "fp-ts/Either";
+import * as NEA from "fp-ts/NonEmptyArray";
 import { pipe } from "fp-ts/function";
 import * as N from "fp-ts/number";
 import { describe, expect, it } from "vitest";
@@ -7,6 +8,7 @@ import { TO_REPLACE } from "./utils";
 
 /**
  * https://gcanti.github.io/fp-ts/modules/Array.ts.html
+ * https://gcanti.github.io/fp-ts/modules/NonEmptyArray.ts.html
  */
 describe("Array Advanced", () => {
   it.skip("should filter and map an array at the same time", () => {
@@ -134,6 +136,34 @@ describe("Array Advanced", () => {
     expect(resultWithPipe).toEqual(result);
   });
 
+  it.skip.each`
+    input     | case
+    ${[]}     | ${"when array is empty"}
+    ${[3, 9]} | ${"when array is not empty"}
+  `(
+    "should better type non empty array $case",
+    ({ input }: { input: number[] }) => {
+      const unsafeFunctionWithArray = (values: NEA.NonEmptyArray<number>) =>
+        pipe(
+          values,
+          A.map((value) => value / values.length)
+        );
+
+      let result = [] as number[];
+      if (A.isNonEmpty(input)) {
+        result = unsafeFunctionWithArray(input);
+      }
+
+      // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
+
+      const resultWithPipe = pipe(input, TO_REPLACE);
+
+      // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
+
+      expect(resultWithPipe).toEqual(result);
+    }
+  );
+
   it.skip("should dedupe simple items in a list", () => {
     const input = [1, 3, 6, 8, 3];
 
@@ -200,22 +230,3 @@ describe("Array Advanced", () => {
     expect(resultWithPipe).toEqual(result);
   });
 });
-
-/**
- * Advanced
- *
- * filterMap
- * partition
- * separate
- *
- * findFirst
- * isOutOfBound / lookup
- * insertAt
- * updateAt
- * deleteAt
- *
- * elem
- * sort
- * sortBy
- * uniq
- */
