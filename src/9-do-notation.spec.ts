@@ -23,8 +23,8 @@ describe("Do notation", () => {
       ),
       T.flatMap(({ author, books }) =>
         pipe(
-          getSimilarAuhtors(author.id),
-          T.map((similarAuhtors) => ({ author, books, similarAuhtors }))
+          getSimilarAuthors(author.id),
+          T.map((similarAuthors) => ({ author, books, similarAuthors }))
         )
       ),
       T.map(toAuthorDto)
@@ -74,7 +74,7 @@ const getAuthor =
   () =>
     Promise.resolve({ id, name: `John Doe` });
 
-const getSimilarAuhtors =
+const getSimilarAuthors =
   (id: number): T.Task<SimilarAuthor[]> =>
   () =>
     Promise.resolve([{ id: 37, name: "Jane Doe", similarTo: id }]);
@@ -82,17 +82,17 @@ const getSimilarAuhtors =
 const toAuthorDto = ({
   author,
   books,
-  similarAuhtors,
+  similarAuthors,
 }: {
   author: Author;
   books: Book[];
-  similarAuhtors: SimilarAuthor[];
+  similarAuthors: SimilarAuthor[];
 }): AuthorDto => ({
   id: author.id,
   name: author.name,
   booksCount: books.length,
   recommendedAuthors: pipe(
-    similarAuhtors,
+    similarAuthors,
     A.map((author) => author.name)
   ),
 });
