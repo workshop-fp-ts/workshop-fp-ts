@@ -1,13 +1,15 @@
-import * as RTE from "fp-ts/ReaderTaskEither";
 import * as A from "fp-ts/Array";
 import * as TE from "fp-ts/TaskEither";
 import { pipe } from "fp-ts/function";
 import { describe, expect, it } from "vitest";
+import { TO_REPLACE } from "./utils";
 
 /**
  * https://gcanti.github.io/fp-ts/modules/Reader.ts.html
+ * https://gcanti.github.io/fp-ts/modules/ReaderTaskEither.ts.html
  *
  * Reader can be used to inject dependencies through multiple functions
+ * PS: When you are working with async data you must use ReaderTaskEither
  */
 
 describe("Reader", () => {
@@ -39,35 +41,9 @@ describe("Reader", () => {
     };
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
-    const fetchAuthors_Reader =
-      (
-        cursor: number
-      ): RTE.ReaderTaskEither<
-        Pick<Dependencies, "authorClient">,
-        FetchError,
-        Author[]
-      > =>
-      ({ authorClient }) =>
-        pipe(
-          authorClient.getAll(),
-          TE.map(A.filter((author) => author.id > cursor))
-        );
-    const persistAuthors_Reader =
-      (
-        authors: Author[]
-      ): RTE.ReaderTaskEither<
-        Pick<Dependencies, "authorRepository">,
-        DatabaseError,
-        Author[]
-      > =>
-      ({ authorRepository }) =>
-        pipe(
-          authors,
-          A.map(authorRepository.upsert),
-          A.sequence(TE.ApplicativeSeq)
-        );
-    const sync_Reader = (cursor: number) =>
-      pipe(fetchAuthors_Reader(cursor), RTE.flatMap(persistAuthors_Reader));
+
+    const sync_Reader = (cursor: number) => pipe(TO_REPLACE);
+
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
     // IOC
