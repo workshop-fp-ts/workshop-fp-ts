@@ -189,47 +189,4 @@ describe("Either – Advanced exercises", () => {
       })
     ).toEqual(E.left("underage"));
   });
-
-  it.todo("Array's PARTITIONMAP", () => {}); // TODO
-
-  it.todo("Advanced exercise: this one is more difficult!", () => {
-    const validateEmail = E.fromPredicate(
-      (user: UserCreationDto) => user.email.includes("@"),
-      () => ["invalid_email"]
-    );
-
-    const validateOverage = E.fromPredicate(
-      (user: UserCreationDto) => user.age >= 18,
-      () => ["underage"]
-    );
-
-    const validateUsername = E.fromPredicate(
-      (user: UserCreationDto) => user.username.length > 3,
-      () => ["invalid_username"]
-    );
-
-    // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
-
-    const validateUser = (user: UserCreationDto) => {
-      // TODO
-    };
-
-    // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
-
-    expect(
-      validateUser({
-        username: "Richard",
-        email: "richardgmail.com",
-        age: 18,
-      })
-    ).toEqual(E.left(["invalid_email"]));
-
-    expect(
-      validateUser({
-        username: "Jo",
-        email: "jogmail.com",
-        age: 12,
-      })
-    ).toEqual(E.left(["invalid_email", "invalid_username", "underage"]));
-  });
 });
