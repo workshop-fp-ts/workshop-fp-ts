@@ -99,11 +99,11 @@ describe("Option", () => {
 
   it.skip("You can extract a value in case of Some, providing a default value in case of None", () => {
     const isEven = (x: number) => x % 2 === 0;
-    const ifNone = () => 999;
+    const onNone = () => 999;
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const fn = (x: number) => pipe(isEven(x) ? O.some(x) : O.none, TO_REPLACE);
+    const fn = (x: number) => pipe(x, TO_REPLACE);
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -120,7 +120,7 @@ describe("Option", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const fn = (x: number) => pipe(isEven(x) ? O.some(x) : O.none, TO_REPLACE);
+    const fn = (x: number) => pipe(x, TO_REPLACE);
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -138,7 +138,7 @@ describe("Option", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const fn = (x: number) => pipe(isEven(x) ? O.some(x) : O.none, TO_REPLACE);
+    const fn = (x: number) => pipe(x, TO_REPLACE);
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -156,8 +156,7 @@ describe("Option", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const fn = (x: number) =>
-      pipe(isEven(x) ? O.some(x) : O.none, TO_REPLACE, O.match(onNone, onSome));
+    const fn = (x: number) => pipe(x, TO_REPLACE);
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -170,15 +169,11 @@ describe("Option", () => {
 
   it.skip("You can filter values", () => {
     const isEven = (x: number) => x % 2 === 0;
+    const onNone = () => 0;
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const fn = (x: number) =>
-      pipe(
-        isEven(x) ? O.some(x) : O.none,
-        TO_REPLACE,
-        O.getOrElse(() => 0)
-      );
+    const fn = (x: number) => pipe(x, TO_REPLACE);
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -191,6 +186,7 @@ describe("Option", () => {
 
   it.skip("You can filter and map", () => {
     const isZeroOrLess = (x: number) => x <= 0;
+    const onNone = () => 0;
 
     const doDividePieOfSize = (total: number) => (x: number) =>
       isZeroOrLess(x) ? O.none : O.some(total / x);
@@ -199,12 +195,7 @@ describe("Option", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const fn = (x: number) =>
-      pipe(
-        O.some(x),
-        TO_REPLACE,
-        O.getOrElse(() => 0)
-      );
+    const fn = (x: number) => pipe(x, TO_REPLACE);
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 

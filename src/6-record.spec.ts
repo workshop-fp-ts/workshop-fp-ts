@@ -15,12 +15,6 @@ import { isPromise } from "util/types";
  *
  */
 
-// fromEntries OK
-// toEntries / toArray OK
-// map OK
-// filter OK
-// flap OK
-// partition TODO (w Either)
 // filterMap TODO
 // reduce ?
 // reduceRight ?
@@ -105,8 +99,6 @@ describe("Record", () => {
     expect(result).toEqual(expect.objectContaining({ b: 2 }));
   });
   it.skip("You can filter records of Options, keeping only the Some values", () => {
-    const isEven = (x: number) => x % 2 === 0;
-
     const record = {
       a: O.some(3),
       b: O.none,
@@ -121,41 +113,64 @@ describe("Record", () => {
     expect(result).toEqual(expect.objectContaining({ a: 3 }));
   });
   it.skip("You can take a Record of functions and a value to produce a Record with the processed input", () => {
-    const isEven = (x: number) => x % 2 === 0;
-    const isGreaterThanZero = (x: number) => x > 0;
-    const isZero = (x: number) => x === 0;
+    type UserCreationDto = { username: string; email: string; age: number };
+
+    const validateEmail = (user: UserCreationDto) => user.email.includes("@");
+
+    const validateOverage = (user: UserCreationDto) => user.age >= 18;
+
+    const validateUsername = (user: UserCreationDto) =>
+      user.username.length > 3;
 
     const record = {
-      even: isEven,
-      positive: isGreaterThanZero,
-      zero: isZero,
+      validUsername: validateUsername,
+      validEmail: validateEmail,
+      validAge: validateOverage,
     };
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const fn = (x: number) => pipe(record, TO_REPLACE);
+    const validateUser = (user: UserCreationDto) => pipe(record, R.flap(user));
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
-    expect(fn(-1)).toEqual(
+    expect(
+      validateUser({
+        username: "Richard",
+        email: "richardgmail.com",
+        age: 18,
+      })
+    ).toEqual(
       expect.objectContaining({
-        even: false,
-        positive: false,
-        zero: false,
+        validUsername: true,
+        validEmail: false,
+        validAge: true,
       })
     );
-    expect(fn(2)).toEqual(
+    expect(
+      validateUser({
+        username: "Jo",
+        email: "jo@gmail.com",
+        age: 20,
+      })
+    ).toEqual(
       expect.objectContaining({
-        even: true,
-        positive: true,
-        zero: false,
+        validUsername: false,
+        validEmail: true,
+        validAge: true,
       })
     );
-    expect(fn(0)).toEqual(
+    expect(
+      validateUser({
+        username: "Jordy",
+        email: "jo@gmail.com",
+        age: 12,
+      })
+    ).toEqual(
       expect.objectContaining({
-        even: true,
-        positive: false,
-        zero: true,
+        validUsername: true,
+        validEmail: true,
+        validAge: false,
       })
     );
   });
