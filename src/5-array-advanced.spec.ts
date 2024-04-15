@@ -11,7 +11,7 @@ import { TO_REPLACE } from "./utils";
  * https://gcanti.github.io/fp-ts/modules/NonEmptyArray.ts.html
  */
 describe("Array Advanced", () => {
-  it.skip("should filter and map an array at the same time", () => {
+  it.todo("should filter and map an array at the same time", () => {
     const input = ["{invalid json}", '{"hello": "filterMap"}'];
 
     const result = input.flatMap((rawData) => {
@@ -32,7 +32,7 @@ describe("Array Advanced", () => {
     expect(resultWithPipe).toEqual(result);
   });
 
-  it.skip.each`
+  it.todo.each`
     input                         | case
     ${["green", "yellow", "red"]} | ${"when value is found"}
     ${["green", "red"]}           | ${"when value is not found"}
@@ -52,7 +52,7 @@ describe("Array Advanced", () => {
     expect(resultWithPipe).toEqual(result);
   });
 
-  it.skip("should separate items in 2 groups", () => {
+  it.todo("should separate items in 2 groups", () => {
     type InvalidResult = { success: false; message: string };
     type ValidResult = { success: true; data: number };
     type Result = ValidResult | InvalidResult;
@@ -84,7 +84,7 @@ describe("Array Advanced", () => {
     expect(resultWithPipe).toEqual(result);
   });
 
-  it.skip("should separate from an Either's list", () => {
+  it.todo("should separate from an Either's list", () => {
     type InvalidResult = { message: string };
     type ValidResult = { data: number };
     type Result = E.Either<InvalidResult, ValidResult>;
@@ -111,7 +111,7 @@ describe("Array Advanced", () => {
     });
   });
 
-  it.skip("should find item in a list", () => {
+  it.todo("should find item in a list", () => {
     const input = [
       { position: 3, message: "foo" },
       { position: 11, message: "bar" },
@@ -136,7 +136,7 @@ describe("Array Advanced", () => {
     expect(resultWithPipe).toEqual(result);
   });
 
-  it.skip.each`
+  it.todo.each`
     input     | case
     ${[]}     | ${"when array is empty"}
     ${[3, 9]} | ${"when array is not empty"}
@@ -164,7 +164,7 @@ describe("Array Advanced", () => {
     }
   );
 
-  it.skip("should dedupe simple items in a list", () => {
+  it.todo("should dedupe simple items in a list", () => {
     const input = [1, 3, 6, 8, 3];
 
     const result = Array.from(new Set(input));
@@ -178,7 +178,7 @@ describe("Array Advanced", () => {
     expect(resultWithPipe).toEqual(result);
   });
 
-  it.skip("should dedupe objects in a list", () => {
+  it.todo("should dedupe objects in a list", () => {
     const input = [
       { position: 4 },
       { position: 1 },
@@ -199,7 +199,7 @@ describe("Array Advanced", () => {
     expect(resultWithPipe).toEqual(result);
   });
 
-  it.skip("should sort simple items in a list", () => {
+  it.todo("should sort simple items in a list", () => {
     const input = [1, 3, 6, 8, 3];
 
     const result = input.sort();
@@ -212,7 +212,7 @@ describe("Array Advanced", () => {
     expect(resultWithPipe).toEqual(result);
   });
 
-  it.skip("should sort objects in a list", () => {
+  it.todo("should sort objects in a list", () => {
     const input = [
       { position: 4 },
       { position: 1 },

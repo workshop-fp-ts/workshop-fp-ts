@@ -10,7 +10,7 @@ import { TO_REPLACE } from "./utils";
  * Do notation can be used to simplify your code
  */
 describe("Do notation", () => {
-  it.skip("The do notation help you create a context", async () => {
+  it.todo("The do notation help you create a context", async () => {
     const authorId = 42;
 
     const taskToSimplify = pipe(

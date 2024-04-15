@@ -46,7 +46,7 @@ describe("Task", () => {
     releaseBooksApiMock();
   });
 
-  it.skip("Create task from constant value", () => {
+  it.todo("Create task from constant value", () => {
     const input = 42;
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
@@ -58,7 +58,7 @@ describe("Task", () => {
     return expect(task()).resolves.toEqual(42);
   });
 
-  it.skip("You can map task values", () => {
+  it.todo("You can map task values", () => {
     const input = T.of("hello");
     const toUppercase = (value: string) => value.toUpperCase();
 
@@ -71,7 +71,7 @@ describe("Task", () => {
     return expect(task()).resolves.toEqual("HELLO");
   });
 
-  it.skip("More concrete example: wrapping fetch within a Task", () => {
+  it.todo("More concrete example: wrapping fetch within a Task", () => {
     const getAuthorsTask: T.Task<Author[]> = () =>
       fetch("https://my-books-library.com/authors.json").then(
         (response) => response.json() as any
@@ -86,7 +86,7 @@ describe("Task", () => {
     return expect(task()).resolves.toEqual(["Victor Hugo", "Robin Hobb"]);
   });
 
-  it.skip("Chaining tasks", () => {
+  it.todo("Chaining tasks", () => {
     const getFavoriteAuthorTask: T.Task<Author> = () =>
       fetch("https://my-books-library.com/favorite.json").then(
         (response) => response.json() as any
@@ -111,7 +111,7 @@ describe("Task", () => {
     });
   });
 
-  it.skip("Combining several tasks", () => {
+  it.todo("Combining several tasks", () => {
     const getAuthorsTask: T.Task<Author[]> = () =>
       fetch("https://my-books-library.com/authors.json").then(
         (response) => response.json() as any
@@ -171,7 +171,7 @@ describe("TaskEither", () => {
     releaseBooksApiMock();
   });
 
-  it.skip("Properly wrapping fetch within a TaskEither", async () => {
+  it.todo("Properly wrapping fetch within a TaskEither", async () => {
     // ⬇⬇⬇⬇ Fix code here ⬇⬇⬇⬇
 
     const getAuthorBooks = (authorId) => () =>
