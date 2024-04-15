@@ -142,11 +142,6 @@ describe("Either", () => {
 describe("Either – Advanced exercises", () => {
   type UserCreationDto = { username: string; email: string; age: number };
 
-  const hasValidEmail = (user: UserCreationDto): boolean =>
-    user.email.includes("@");
-
-  const isUnderage = (user: UserCreationDto) => user.age < 18;
-
   it.todo("Obtain the desired value by using all functions", () => {
     const validateUsername = (user: UserCreationDto) =>
       pipe(
@@ -156,6 +151,11 @@ describe("Either – Advanced exercises", () => {
           () => "invalid_username"
         )
       );
+
+    const hasValidEmail = (user: UserCreationDto): boolean =>
+      user.email.includes("@");
+
+    const isUnderage = (user: UserCreationDto) => user.age < 18;
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
