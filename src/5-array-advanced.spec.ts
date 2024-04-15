@@ -11,6 +11,9 @@ import { TO_REPLACE } from "./utils";
  * https://gcanti.github.io/fp-ts/modules/NonEmptyArray.ts.html
  */
 describe("Array Advanced", () => {
+  /**
+   * https://gcanti.github.io/fp-ts/modules/Json.ts.html
+   */
   it.todo("should filter and map an array at the same time", () => {
     const input = ["{invalid json}", '{"hello": "filterMap"}'];
 
