@@ -69,7 +69,6 @@ describe("Option", () => {
     "You can extract a value in case of Some, providing a default value in case of None",
     () => {
       const isEven = (x: number) => x % 2 === 0;
-      const onNone = () => 999;
 
       // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
@@ -89,7 +88,6 @@ describe("Option", () => {
     "You can extract a value in case of Some, providing a default value in case of None, and they may be of different types",
     () => {
       const isEven = (x: number) => x % 2 === 0;
-      const onNone = () => "not even";
 
       // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
@@ -109,8 +107,6 @@ describe("Option", () => {
     "You can extract a value and transform it on the fly in case of Some, providing a default value in case of None",
     () => {
       const isEven = (x: number) => x % 2 === 0;
-      const onNone = () => `not an even value`;
-      const onSome = (i: number) => `even value: ${i}`;
 
       // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
@@ -128,8 +124,6 @@ describe("Option", () => {
 
   it.todo("You can map values", () => {
     const isEven = (x: number) => x % 2 === 0;
-    const onNone = () => `not an even value`;
-    const onSome = (i: string) => `even value: ${i}`;
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
@@ -146,7 +140,6 @@ describe("Option", () => {
 
   it.todo("You can filter values", () => {
     const isEven = (x: number) => x % 2 === 0;
-    const onNone = () => 0;
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
@@ -163,7 +156,6 @@ describe("Option", () => {
 
   it.todo("You can filter and map", () => {
     const isZeroOrLess = (x: number) => x <= 0;
-    const onNone = () => 0;
 
     const doDividePieOfSize = (total: number) => (x: number) =>
       isZeroOrLess(x) ? O.none : O.some(total / x);
