@@ -139,7 +139,12 @@ describe("Option", () => {
   });
 
   it.todo("You can filter values", () => {
+<<<<<<< HEAD
     const isEven = (x: number) => x % 2 === 0;
+=======
+    const isPositive = (x: number) => x > 0;
+    const onNone = () => 0;
+>>>>>>> bde2222 (replace with appropriate lambda)
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
