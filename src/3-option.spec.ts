@@ -6,6 +6,21 @@ import { TO_REPLACE } from "./utils";
 
 /**
  * https://gcanti.github.io/fp-ts/modules/Option.ts.html
+ *
+ * Option (or Maybe) represents a possible absence of data
+ *
+ * type Option<T> = Some<T> | None;
+ *
+ * where
+ * ```
+ * None = { _tag: "None"}; // which expresses that there is no data
+ * ```
+ *
+ * and
+ * ```
+ * Some<T> = { _tag: "Some", value: T}; // which expresses that there issome data
+ * ```
+ *
  */
 
 describe("Option", () => {
