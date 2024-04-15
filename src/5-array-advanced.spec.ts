@@ -174,7 +174,7 @@ describe("Array Advanced", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const resultWithPipe = pipe(input, A.uniq(N.Eq));
+    const resultWithPipe = pipe(input, TO_REPLACE);
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
