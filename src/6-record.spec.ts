@@ -112,6 +112,26 @@ describe("Record", () => {
 
     expect(result).toEqual(expect.objectContaining({ a: 3 }));
   });
+  it.skip("You can filter records with values satisfying a predicate and map the retained values", () => {
+    const mapIfEven = (x: number) =>
+      x % 2 === 0 ? O.some(`${x} is even`) : O.none;
+
+    const record = {
+      a: 6,
+      b: 3,
+      c: 8,
+    };
+
+    // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
+
+    const result = pipe(record, TO_REPLACE);
+
+    // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
+
+    expect(result).toEqual(
+      expect.objectContaining({ a: "6 is even", c: "8 is even" })
+    );
+  });
   it.skip("You can take a Record of functions and a value to produce a Record with the processed input", () => {
     type UserCreationDto = { username: string; email: string; age: number };
 
