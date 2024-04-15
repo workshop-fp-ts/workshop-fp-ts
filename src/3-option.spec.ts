@@ -1,3 +1,4 @@
+// Comme précemment on importe ci-dessous la boîte outil "Option" de fp-ts
 import * as O from "fp-ts/Option";
 import { pipe } from "fp-ts/function";
 import { expect, describe, it } from "vitest";
@@ -5,43 +6,7 @@ import { TO_REPLACE } from "./utils";
 
 /**
  * https://gcanti.github.io/fp-ts/modules/Option.ts.html
- *
- * Option (or Maybe) represents a possible absence of data
- *
- * type Option<T> = Some<T> | None;
- *
- * where
- * ```
- * None = { _tag: "None"};
- * ```
- * which expresses that there is no data
- *
- * and
- * ```
- * Some<T> = { _tag: "Some", value: T};
- *
- * which carries the data and the information that there is some data
- *
  */
-
-// none OK
-// some OK
-// fromNullable OK
-// fromPredicate OK
-// getOrElse OK
-// getOrEleseW OK
-// match/fold OK
-// map OK
-// filter OK
-// filterMap OK
-// compact (optional)
-// reduce (optional)
-// reduceRight (optional)
-// toNullable (optional)
-// toUndefined (optional)
-// partition (optional)
-// ADVANCED (after either)
-// partitionMap (optional)
 
 describe("Option", () => {
   it.todo("You can create options of the none type", () => {

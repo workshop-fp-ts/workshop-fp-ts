@@ -1,3 +1,4 @@
+// Voici par exemple comment importer la boîte à outil "Array" de fp-ts
 import * as A from "fp-ts/Array";
 import { pipe } from "fp-ts/function";
 import { expect, describe, it } from "vitest";
@@ -56,7 +57,7 @@ describe("Array", () => {
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
-    expect(hasOddValue).toBeTruthy();
+    expect(hasOddValue).toEqual(true);
   });
 
   it.todo("check every items of an array", () => {
@@ -69,7 +70,7 @@ describe("Array", () => {
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
-    expect(hasOnlyOddValues).toBeTruthy();
+    expect(hasOnlyOddValues).toEqual(true);
   });
 
   it.todo("flatMap an array", () => {

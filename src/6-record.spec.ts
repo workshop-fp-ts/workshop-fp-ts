@@ -8,18 +8,7 @@ import { isPromise } from "util/types";
 
 /**
  * https://gcanti.github.io/fp-ts/modules/Record.ts.html
- *
- * Record enables dealing with Typescript’s Record<K, T> type in a functional way
- *
- * type Record<K, T>;
- *
  */
-
-// filterMap TODO
-// reduce ?
-// reduceRight ?
-// partitionMap ?
-// separate ?
 
 describe("Record", () => {
   it.todo("You can build a record from entries", () => {
