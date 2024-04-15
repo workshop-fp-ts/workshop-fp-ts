@@ -143,7 +143,7 @@ describe("Option", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const fn = (x: number) => pipe(x, TO_REPLACE);
+    const fn = (x: number) => pipe(O.some(x), TO_REPLACE);
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
