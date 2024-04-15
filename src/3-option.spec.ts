@@ -24,10 +24,10 @@ describe("Option", () => {
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
-    expect(result._tag).toEqual("Some");
-    if (result._tag === "Some") {
-      expect(result.value).toEqual(42);
+    if (O.isNone(result)) {
+      throw new Error("should be a Some");
     }
+    expect(result.value).toEqual(42);
   });
 
   it.todo("You can build an option from a possibly nullish value", () => {
@@ -41,9 +41,9 @@ describe("Option", () => {
     const resultFromNull = fn(null);
     const resultFromUndefined = fn(undefined);
 
-    expect(resultFromTruthy._tag).toEqual("Some");
-    expect(resultFromNull._tag).toEqual("None");
-    expect(resultFromUndefined._tag).toEqual("None");
+    expect(O.isSome(resultFromTruthy)).toEqual(true);
+    expect(O.isNone(resultFromNull)).toEqual(true);
+    expect(O.isNone(resultFromUndefined)).toEqual(true);
   });
 
   it.todo(
@@ -60,8 +60,8 @@ describe("Option", () => {
       const resultFromEvenNumber = fn(2);
       const resultFromOddNumber = fn(3);
 
-      expect(resultFromEvenNumber._tag).toEqual("Some");
-      expect(resultFromOddNumber._tag).toEqual("None");
+      expect(O.isSome(resultFromEvenNumber)).toEqual(true);
+      expect(O.isNone(resultFromOddNumber)).toEqual(true);
     }
   );
 
