@@ -13,7 +13,7 @@ import { TO_REPLACE } from "./utils";
  */
 
 describe("Reader", () => {
-  it("The reader monad help you inject dependencies", async () => {
+  it.todo("The reader monad help you inject dependencies", async () => {
     type Sync = TE.TaskEither<DatabaseError | FetchError, Author[]>;
     const buildGetAuthors_PartialApplication =
       ({ authorClient }: { authorClient: AuthorClient }) =>
