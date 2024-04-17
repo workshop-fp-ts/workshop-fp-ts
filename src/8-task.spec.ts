@@ -88,7 +88,7 @@ describe("Task", () => {
 
   it.todo("Chaining tasks", () => {
     const getFavoriteAuthorTask: T.Task<Author> = () =>
-      fetch("https://my-books-library.com/favorite.json").then(
+      fetch("https://my-books-library.com/authors/favorite.json").then(
         (response) => response.json() as any
       );
 
