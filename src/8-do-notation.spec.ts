@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import { TO_REPLACE } from "./utils";
 
 /**
- * https://gcanti.github.io/fp-ts/modules/Task.ts.html
+ * https://gcanti.github.io/fp-ts/guides/do-notation.html
  *
  * Do notation can be used to simplify your code
  */
