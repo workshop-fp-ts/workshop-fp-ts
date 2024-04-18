@@ -1,3 +1,4 @@
+import * as E from "fp-ts/Either";
 import * as TE from "fp-ts/TaskEither";
 import * as T from "fp-ts/Task";
 import { pipe } from "fp-ts/function";
@@ -182,11 +183,11 @@ describe("TaskEither", () => {
     // ⬆⬆⬆⬆ Fix code here ⬆⬆⬆⬆
 
     await expect(getAuthorBooks(1)).resolves.toEqual(
-      TE.right(["Les Misérables", "Le Dernier Jour d'un condamné"])
+      E.right(["Les Misérables", "Le Dernier Jour d'un condamné"])
     );
-    await expect(getAuthorBooks(3)).resolves.toEqual(TE.left("NOT FOUND"));
+    await expect(getAuthorBooks(3)).resolves.toEqual(E.left("NOT FOUND"));
     await expect(getAuthorBooks("invalidId")).resolves.toEqual(
-      TE.left("BAD REQUEST")
+      E.left("BAD REQUEST")
     );
   });
 });
