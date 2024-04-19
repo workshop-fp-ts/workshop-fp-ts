@@ -4,6 +4,7 @@ import * as O from "fp-ts/Option";
 import { pipe } from "fp-ts/function";
 import { expect, describe, it } from "vitest";
 import { TO_REPLACE } from "./utils";
+import { not } from "fp-ts/lib/Predicate";
 
 /**
  * https://gcanti.github.io/fp-ts/modules/Either.ts.html
@@ -30,39 +31,37 @@ import { TO_REPLACE } from "./utils";
  */
 
 describe("Either", () => {
-  it.todo("With E.map, you can transform the Right value of an Either", () => {
+  it("With E.map, you can transform the Right value of an Either", () => {
     const input = E.right(1);
     const double = (i: number) => i * 2;
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const result = pipe(input, TO_REPLACE);
+    const result = pipe(input, E.map(double));
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
     expect(result).toEqual(E.right(2));
   });
 
-  it.todo(
-    "With E.mapLeft, you can transform the Left value of an Either",
-    () => {
-      const input = E.left(1);
-      const double = (i: number) => i * 2;
+  it("With E.mapLeft, you can transform the Left value of an Either", () => {
+    const input = E.left(1);
+    const double = (i: number) => i * 2;
 
-      // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
-
-      const result = pipe(input, TO_REPLACE);
-
-      // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
-
-      expect(result).toEqual(E.left(2));
-    }
-  );
-
-  it.todo("You can create a Either from a nullable value", () => {
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const toEither = (n: number | null) => pipe(n, TO_REPLACE);
+    const result = pipe(input, E.mapLeft(double));
+
+    // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
+
+    expect(result).toEqual(E.left(2));
+  });
+
+  it("You can create a Either from a nullable value", () => {
+    // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
+
+    const toEither = (n: number | null) =>
+      pipe(n, E.fromNullable("No value provided"));
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -70,10 +69,14 @@ describe("Either", () => {
     expect(toEither(null)).toEqual(E.left("No value provided"));
   });
 
-  it.todo("You can create a Either from an Option", () => {
+  it("You can create a Either from an Option", () => {
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const toEither = (n: O.Option<number>) => pipe(n, TO_REPLACE);
+    const toEither = (n: O.Option<number>) =>
+      pipe(
+        n,
+        E.fromOption(() => "No value provided")
+      );
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -81,41 +84,43 @@ describe("Either", () => {
     expect(toEither(O.none)).toEqual(E.left("No value provided"));
   });
 
-  it.todo(
-    "With E.fromPredicate, you can conditionnaly create a Left or a Right",
-    () => {
-      const isEven = (i: number) => i % 2 === 0;
+  it("With E.fromPredicate, you can conditionnaly create a Left or a Right", () => {
+    const isEven = (i: number) => i % 2 === 0;
 
-      // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
+    // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-      const onlyEvenNumbers = (n: number) => pipe(n, TO_REPLACE);
+    const onlyEvenNumbers = (n: number) =>
+      pipe(
+        n,
+        E.fromPredicate(isEven, (d) => `${d} is not even`)
+      );
 
-      // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
+    // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
-      expect(onlyEvenNumbers(2)).toEqual(E.right(2));
-      expect(onlyEvenNumbers(8)).toEqual(E.right(8));
-      expect(onlyEvenNumbers(1)).toEqual(E.left("1 is not even"));
-      expect(onlyEvenNumbers(5)).toEqual(E.left("5 is not even"));
-    }
-  );
+    expect(onlyEvenNumbers(2)).toEqual(E.right(2));
+    expect(onlyEvenNumbers(8)).toEqual(E.right(8));
+    expect(onlyEvenNumbers(1)).toEqual(E.left("1 is not even"));
+    expect(onlyEvenNumbers(5)).toEqual(E.left("5 is not even"));
+  });
 
-  it.todo(
-    "You can extract a value, providing a default value in case of left",
-    () => {
-      // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
+  it("You can extract a value, providing a default value in case of left", () => {
+    // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-      const getValue = (n: E.Either<string, number>) => pipe(n, TO_REPLACE);
+    const getValue = (n: E.Either<string, number>) =>
+      pipe(
+        n,
+        E.getOrElse(() => -1)
+      );
 
-      // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
+    // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
-      expect(getValue(E.right(2))).toEqual(2);
-      expect(getValue(E.right(17))).toEqual(17);
-      expect(getValue(E.left("error"))).toEqual(-1);
-      expect(getValue(E.left("another error"))).toEqual(-1);
-    }
-  );
+    expect(getValue(E.right(2))).toEqual(2);
+    expect(getValue(E.right(17))).toEqual(17);
+    expect(getValue(E.left("error"))).toEqual(-1);
+    expect(getValue(E.left("another error"))).toEqual(-1);
+  });
 
-  it.todo("You can flatten nested Eithers", () => {
+  it("You can flatten nested Eithers", () => {
     const keepOnlyEven = E.fromPredicate(
       (n: number) => n % 2 === 0,
       () => "Not a multiple of 2"
@@ -128,7 +133,13 @@ describe("Either", () => {
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
     const keepOnlyMultiplesOf6 = (n: number) =>
-      pipe(n, keepOnlyEven, E.map(keepOnlyMultiplesOf3));
+      pipe(
+        n,
+        keepOnlyEven,
+        E.map(keepOnlyMultiplesOf3),
+        E.flatten,
+        E.mapLeft(() => "Not a multiple of 6")
+      );
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -142,7 +153,7 @@ describe("Either", () => {
 describe("Either – Advanced exercises", () => {
   type UserCreationDto = { username: string; email: string; age: number };
 
-  it.todo("Obtain the desired value by using all functions", () => {
+  it("Obtain the desired value by using all functions", () => {
     const validateUsername = (user: UserCreationDto) =>
       pipe(
         user,
@@ -160,7 +171,12 @@ describe("Either – Advanced exercises", () => {
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
     const validateUser = (user: UserCreationDto) => {
-      // TODO
+      return pipe(
+        user,
+        validateUsername,
+        E.filterOrElse(hasValidEmail, () => "invalid_email"),
+        E.filterOrElse(not(isUnderage), () => "underage")
+      );
     };
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
