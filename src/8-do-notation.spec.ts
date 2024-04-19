@@ -2,7 +2,6 @@ import * as A from "fp-ts/Array";
 import * as T from "fp-ts/Task";
 import { pipe } from "fp-ts/function";
 import { describe, expect, it } from "vitest";
-import { TO_REPLACE } from "./utils";
 
 /**
  * https://gcanti.github.io/fp-ts/guides/do-notation.html
@@ -10,7 +9,7 @@ import { TO_REPLACE } from "./utils";
  * Do notation can be used to simplify your code
  */
 describe("Do notation", () => {
-  it.todo("The do notation help you create a context", async () => {
+  it("The do notation help you create a context", async () => {
     const authorId = 42;
 
     const taskToSimplify = pipe(
@@ -33,7 +32,9 @@ describe("Do notation", () => {
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
     const taskWithDoNotation = pipe(
       getAuthor(authorId),
-      TO_REPLACE,
+      T.bindTo("author"),
+      T.bind("books", ({ author }) => getBooksByAuthor(author.id)),
+      T.bind("similarAuthors", ({ author }) => getSimilarAuthors(author.id)),
       T.map(toAuthorDto)
     );
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
