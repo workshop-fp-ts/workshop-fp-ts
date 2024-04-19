@@ -1,10 +1,13 @@
 import * as A from "fp-ts/Array";
 import * as E from "fp-ts/Either";
+import * as Eq from "fp-ts/Eq";
+import * as J from "fp-ts/Json";
 import * as NEA from "fp-ts/NonEmptyArray";
+import * as O from "fp-ts/Option";
+import * as Ord from "fp-ts/Ord";
 import { pipe } from "fp-ts/function";
 import * as N from "fp-ts/number";
 import { describe, expect, it } from "vitest";
-import { TO_REPLACE } from "./utils";
 
 /**
  * https://gcanti.github.io/fp-ts/modules/Array.ts.html
@@ -14,7 +17,7 @@ describe("Array Advanced", () => {
   /**
    * https://gcanti.github.io/fp-ts/modules/Json.ts.html
    */
-  it.todo("should filter and map an array at the same time", () => {
+  it("should filter and map an array at the same time", () => {
     const input = ["{invalid json}", '{"hello": "filterMap"}'];
 
     const result = input.flatMap((rawData) => {
@@ -28,14 +31,19 @@ describe("Array Advanced", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const resultWithPipe = pipe(input, TO_REPLACE);
+    const resultWithPipe = pipe(
+      input,
+      A.filterMap((rawData) => pipe(rawData, J.parse, O.fromEither))
+      // Alternative
+      // A.filterMap(flow(J.parse, O.fromEither))
+    );
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
     expect(resultWithPipe).toEqual(result);
   });
 
-  it.todo.each`
+  it.each`
     input                         | case
     ${["green", "yellow", "red"]} | ${"when value is found"}
     ${["green", "red"]}           | ${"when value is not found"}
@@ -48,14 +56,19 @@ describe("Array Advanced", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const resultWithPipe = pipe(input, TO_REPLACE);
+    const resultWithPipe = pipe(
+      input,
+      A.findFirst(isYellow),
+      O.map(toStone),
+      O.toUndefined
+    );
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
     expect(resultWithPipe).toEqual(result);
   });
 
-  it.todo("should separate items in 2 groups", () => {
+  it("should separate items in 2 groups", () => {
     type InvalidResult = { success: false; message: string };
     type ValidResult = { success: true; data: number };
     type Result = ValidResult | InvalidResult;
@@ -80,14 +93,18 @@ describe("Array Advanced", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const resultWithPipe = pipe(input, TO_REPLACE);
+    const resultWithPipe = pipe(
+      input,
+      A.partition(isValidResult),
+      ({ left, right }) => ({ items: right, errors: left })
+    );
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
     expect(resultWithPipe).toEqual(result);
   });
 
-  it.todo("should separate from an Either's list", () => {
+  it("should separate from an Either's list", () => {
     type InvalidResult = { message: string };
     type ValidResult = { data: number };
     type Result = E.Either<InvalidResult, ValidResult>;
@@ -101,7 +118,7 @@ describe("Array Advanced", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const resultWithPipe = pipe(input, TO_REPLACE);
+    const resultWithPipe = pipe(input, A.separate);
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -114,7 +131,7 @@ describe("Array Advanced", () => {
     });
   });
 
-  it.todo("should find item in a list", () => {
+  it("should find item in a list", () => {
     const input = [
       { position: 3, message: "foo" },
       { position: 11, message: "bar" },
@@ -132,14 +149,19 @@ describe("Array Advanced", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const resultWithPipe = pipe(input, TO_REPLACE);
+    const resultWithPipe = pipe(
+      input,
+      A.findFirst(isFooItem),
+      O.map((v) => v.position + 1),
+      O.getOrElse(() => 0)
+    );
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
     expect(resultWithPipe).toEqual(result);
   });
 
-  it.todo.each`
+  it.each`
     input     | case
     ${[]}     | ${"when array is empty"}
     ${[3, 9]} | ${"when array is not empty"}
@@ -159,7 +181,12 @@ describe("Array Advanced", () => {
 
       // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-      const resultWithPipe = pipe(input, TO_REPLACE);
+      const resultWithPipe = pipe(
+        input,
+        NEA.fromArray,
+        O.map(unsafeFunctionWithArray),
+        O.getOrElse(() => [] as number[])
+      );
 
       // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -167,21 +194,21 @@ describe("Array Advanced", () => {
     }
   );
 
-  it.todo("should dedupe simple items in a list", () => {
+  it("should dedupe simple items in a list", () => {
     const input = [1, 3, 6, 8, 3];
 
     const result = Array.from(new Set(input));
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const resultWithPipe = pipe(input, TO_REPLACE);
+    const resultWithPipe = pipe(input, A.uniq(N.Eq));
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
     expect(resultWithPipe).toEqual(result);
   });
 
-  it.todo("should dedupe objects in a list", () => {
+  it("should dedupe objects in a list", () => {
     const input = [
       { position: 4 },
       { position: 1 },
@@ -195,27 +222,35 @@ describe("Array Advanced", () => {
     );
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
-    const resultWithPipe = pipe(input, TO_REPLACE);
+    const resultWithPipe = pipe(
+      input,
+      A.uniq(
+        pipe(
+          N.Eq,
+          Eq.contramap((item) => item.position)
+        )
+      )
+    );
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
     expect(resultWithPipe).toEqual(result);
   });
 
-  it.todo("should sort simple items in a list", () => {
+  it("should sort simple items in a list", () => {
     const input = [1, 3, 6, 8, 3];
 
     const result = input.sort();
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
-    const resultWithPipe = pipe(input, TO_REPLACE);
+    const resultWithPipe = pipe(input, A.sort(N.Ord));
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
     expect(resultWithPipe).toEqual(result);
   });
 
-  it.todo("should sort objects in a list", () => {
+  it("should sort objects in a list", () => {
     const input = [
       { position: 4 },
       { position: 1 },
@@ -226,7 +261,15 @@ describe("Array Advanced", () => {
     const result = input.sort((a, b) => a.position - b.position);
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
-    const resultWithPipe = pipe(input, TO_REPLACE);
+    const resultWithPipe = pipe(
+      input,
+      A.sort(
+        pipe(
+          N.Ord,
+          Ord.contramap((item: { position: number }) => item.position)
+        )
+      )
+    );
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
