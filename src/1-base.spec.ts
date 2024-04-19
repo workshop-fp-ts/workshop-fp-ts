@@ -14,14 +14,14 @@ describe("Basics", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const resultWithPipe = pipe(input, TO_REPLACE);
+    const resultWithPipe = pipe(input, parseNumber);
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
     expect(resultWithPipe).toEqual(result);
   });
 
-  it.todo("you can pipe as much as you want", () => {
+  it("you can pipe as much as you want", () => {
     const input = "20";
     const parseNumber = (raw: string) => parseInt(raw, 10);
     const increment = (i: number) => i + 1;
@@ -33,14 +33,14 @@ describe("Basics", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const resultWithPipe = pipe(input, TO_REPLACE);
+    const resultWithPipe = pipe(input, parseNumber, increment, double);
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
     expect(resultWithPipe).toEqual(result);
   });
 
-  it.todo("you can use lambda directly in your pipe", () => {
+  it("you can use lambda directly in your pipe", () => {
     const input = "20";
     const parseNumber = (raw: string) => parseInt(raw, 10);
     const double = (i: number) => i * 2;
@@ -51,7 +51,7 @@ describe("Basics", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const resultWithPipe = pipe(input, TO_REPLACE);
+    const resultWithPipe = pipe(input, parseNumber, (i) => i + 5, double);
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
