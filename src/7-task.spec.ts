@@ -1,10 +1,11 @@
+import * as A from "fp-ts/Array";
 import * as E from "fp-ts/Either";
-import * as TE from "fp-ts/TaskEither";
 import * as T from "fp-ts/Task";
-import { pipe } from "fp-ts/function";
+import * as TE from "fp-ts/TaskEither";
+import { flow, pipe } from "fp-ts/function";
 import { fetch } from "undici";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { TO_REPLACE, mockBooksApi, releaseBooksApiMock } from "./utils";
+import { mockBooksApi, releaseBooksApiMock } from "./utils";
 
 /**
  * https://gcanti.github.io/fp-ts/modules/Task.ts.html
@@ -47,32 +48,32 @@ describe("Task", () => {
     releaseBooksApiMock();
   });
 
-  it.todo("Create task from constant value", () => {
+  it("Create task from constant value", () => {
     const input = 42;
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const task = pipe(input, TO_REPLACE);
+    const task = pipe(input, T.of);
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
     return expect(task()).resolves.toEqual(42);
   });
 
-  it.todo("You can map task values", () => {
+  it("You can map task values", () => {
     const input = T.of("hello");
     const toUppercase = (value: string) => value.toUpperCase();
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const task = pipe(input, TO_REPLACE);
+    const task = pipe(input, T.map(toUppercase));
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
     return expect(task()).resolves.toEqual("HELLO");
   });
 
-  it.todo("More concrete example: wrapping fetch within a Task", () => {
+  it("More concrete example: wrapping fetch within a Task", () => {
     const getAuthorsTask: T.Task<Author[]> = () =>
       fetch("https://my-books-library.com/authors.json").then(
         (response) => response.json() as any
@@ -80,14 +81,14 @@ describe("Task", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const task = pipe(getAuthorsTask, TO_REPLACE);
+    const task = pipe(getAuthorsTask, T.map(A.map((a) => a.name)));
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
     return expect(task()).resolves.toEqual(["Victor Hugo", "Robin Hobb"]);
   });
 
-  it.todo("Chaining tasks", () => {
+  it("Chaining tasks", async () => {
     const getFavoriteAuthorTask: T.Task<Author> = () =>
       fetch("https://my-books-library.com/authors/favorite.json").then(
         (response) => response.json() as any
@@ -102,9 +103,18 @@ describe("Task", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const favoriteAuthorWithBooks = pipe(getFavoriteAuthorTask, TO_REPLACE);
+    const favoriteAuthorWithBooks = pipe(
+      getFavoriteAuthorTask,
+      T.flatMap((a) =>
+        pipe(
+          getAuthorBooks(a.id),
+          T.map((books) => ({ name: a.name, books }))
+        )
+      )
+    );
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
+    const debug = await favoriteAuthorWithBooks();
 
     return expect(favoriteAuthorWithBooks()).resolves.toEqual({
       name: "Robin Hobb",
@@ -112,7 +122,7 @@ describe("Task", () => {
     });
   });
 
-  it.todo("Combining several tasks", () => {
+  it("Combining several tasks", async () => {
     const getAuthorsTask: T.Task<Author[]> = () =>
       fetch("https://my-books-library.com/authors.json").then(
         (response) => response.json() as any
@@ -127,10 +137,22 @@ describe("Task", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const authorsWithBooks = pipe(getAuthorsTask, TO_REPLACE);
+    const authorsWithBooks = pipe(
+      getAuthorsTask,
+      T.flatMap(
+        flow(
+          A.map((a) =>
+            pipe(
+              getAuthorBooks(a.id),
+              T.map((books) => ({ name: a.name, books }))
+            )
+          ),
+          T.sequenceArray
+        )
+      )
+    );
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
-
     return expect(authorsWithBooks()).resolves.toEqual([
       {
         name: "Victor Hugo",
@@ -172,13 +194,26 @@ describe("TaskEither", () => {
     releaseBooksApiMock();
   });
 
-  it.todo("Properly wrapping fetch within a TaskEither", async () => {
+  it("Properly wrapping fetch within a TaskEither", async () => {
     // ⬇⬇⬇⬇ Fix code here ⬇⬇⬇⬇
 
-    const getAuthorBooks = (authorId) => () =>
-      fetch(`https://my-books-library.com/authors/${authorId}.json`).then(
-        (response) => response.json() as any
-      );
+    const getAuthorBooks = (authorId) =>
+      pipe(
+        TE.tryCatch(
+          () => fetch(`https://my-books-library.com/authors/${authorId}.json`),
+          () => "NETWORK ERROR"
+        ),
+        TE.filterOrElse(
+          (response) => response.status !== 404,
+          () => "NOT FOUND"
+        ),
+        TE.flatMap((response) =>
+          TE.tryCatch(
+            () => response.json() as any,
+            () => "BAD REQUEST"
+          )
+        )
+      )();
 
     // ⬆⬆⬆⬆ Fix code here ⬆⬆⬆⬆
 
