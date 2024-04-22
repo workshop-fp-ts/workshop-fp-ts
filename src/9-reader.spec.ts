@@ -14,7 +14,6 @@ import { TO_REPLACE } from "./utils";
 
 describe("Reader", () => {
   it.todo("The reader monad help you inject dependencies", async () => {
-    type Sync = TE.TaskEither<DatabaseError | FetchError, Author[]>;
     const buildGetAuthors_PartialApplication =
       ({ authorClient }: { authorClient: AuthorClient }) =>
       (cursor: number) =>
@@ -22,22 +21,25 @@ describe("Reader", () => {
           authorClient.getAll(),
           TE.map(A.filter((author) => author.id > cursor))
         );
+    const buildUpsertAuthors_PartialApplication =
+      ({ authorRepository }: { authorRepository: AuthorRepository }) =>
+      (authors: Author[]) =>
+        pipe(
+          authors,
+          A.map(authorRepository.upsert),
+          A.sequence(TE.ApplicativeSeq)
+        );
     const buildSync_PartialApplication = ({
       authorClient,
       authorRepository,
     }: Dependencies) => {
       const getAuthors = buildGetAuthors_PartialApplication({ authorClient });
-      return (cursor: number): Sync =>
-        pipe(
-          getAuthors(cursor),
-          TE.flatMap((authors) =>
-            pipe(
-              authors,
-              A.map(authorRepository.upsert),
-              A.sequence(TE.ApplicativeSeq)
-            )
-          )
-        );
+      const upsertAuthors = buildUpsertAuthors_PartialApplication({
+        authorRepository,
+      });
+
+      return (cursor: number) =>
+        pipe(getAuthors(cursor), TE.flatMap(upsertAuthors));
     };
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
