@@ -1,5 +1,6 @@
 import * as A from "fp-ts/Array";
 import * as TE from "fp-ts/TaskEither";
+import * as RTE from "fp-ts/ReaderTaskEither";
 import { pipe } from "fp-ts/function";
 import { describe, expect, it } from "vitest";
 import { TO_REPLACE } from "./utils";
@@ -13,8 +14,7 @@ import { TO_REPLACE } from "./utils";
  */
 
 describe("Reader", () => {
-  it.todo("The reader monad help you inject dependencies", async () => {
-    type Sync = TE.TaskEither<DatabaseError | FetchError, Author[]>;
+  it("The reader monad help you inject dependencies", async () => {
     const buildGetAuthors_PartialApplication =
       ({ authorClient }: { authorClient: AuthorClient }) =>
       (cursor: number) =>
@@ -22,27 +22,52 @@ describe("Reader", () => {
           authorClient.getAll(),
           TE.map(A.filter((author) => author.id > cursor))
         );
+    const buildUpsertAuthors_PartialApplication =
+      ({ authorRepository }: { authorRepository: AuthorRepository }) =>
+      (authors: Author[]) =>
+        pipe(
+          authors,
+          A.map(authorRepository.upsert),
+          A.sequence(TE.ApplicativeSeq)
+        );
     const buildSync_PartialApplication = ({
       authorClient,
       authorRepository,
     }: Dependencies) => {
       const getAuthors = buildGetAuthors_PartialApplication({ authorClient });
-      return (cursor: number): Sync =>
-        pipe(
-          getAuthors(cursor),
-          TE.flatMap((authors) =>
-            pipe(
-              authors,
-              A.map(authorRepository.upsert),
-              A.sequence(TE.ApplicativeSeq)
-            )
-          )
-        );
+      const upsertAuthors = buildUpsertAuthors_PartialApplication({
+        authorRepository,
+      });
+
+      return (cursor: number) =>
+        pipe(getAuthors(cursor), TE.flatMap(upsertAuthors));
     };
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
+    const getAuthors_Reader =
+      (cursor: number) =>
+      ({ authorClient }: { authorClient: AuthorClient }) =>
+        pipe(
+          authorClient.getAll(),
+          TE.map(A.filter((author) => author.id > cursor))
+        );
+    const upsertAuthors_Reader =
+      (authors: Author[]) =>
+      ({ authorRepository }: { authorRepository: AuthorRepository }) =>
+        pipe(
+          authors,
+          A.map(authorRepository.upsert),
+          A.sequence(TE.ApplicativeSeq)
+        );
 
-    const sync_Reader = (cursor: number) => pipe(TO_REPLACE);
+    /**
+     * This method does not use dependencies and just pass them "automatically" with the reader data structure
+     * If you look at the inferred type of sync_Reader, you can see dependencies (R), errors (E) and output (A)
+     *
+     * Everything is strictly checked by the compiler and your code is simpler 🎉
+     */
+    const sync_Reader = (cursor: number) =>
+      pipe(getAuthors_Reader(cursor), RTE.flatMap(upsertAuthors_Reader));
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -60,7 +85,7 @@ describe("Reader", () => {
     resetFakeAuthorRepositoryData();
 
     const program_Reader = sync_Reader(1);
-    const program = pipe(dependencies, program_Reader);
+    const program = program_Reader(dependencies);
     await program();
     expect(fakeAuthorRepositoryData).toEqual([{ id: 2, name: "Robin Hobb" }]);
   });
