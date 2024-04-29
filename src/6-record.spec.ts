@@ -153,8 +153,7 @@ describe("Record", () => {
 
       // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-      const validateUser = (user: UserCreationDto) =>
-        pipe(record, R.flap(user));
+      const validateUser = (user: UserCreationDto) => pipe(record, TO_REPLACE);
 
       // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
