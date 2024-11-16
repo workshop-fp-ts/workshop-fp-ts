@@ -1,12 +1,28 @@
 import { pipe } from "fp-ts/function";
 import { expect, describe, it } from "vitest";
 import { TO_REPLACE } from "./utils";
+import * as A from "fp-ts/Array";
 
 /**
- * Pipe let you chain data processing effortlessly
+ * In this section, we will cover the pipe function that we will use a lot in this workshop
+ * and some basic Array functions. You can learn about them in the documentation:
+ * https://gcanti.github.io/fp-ts/modules/Array.ts.html
  */
 describe("Basics", () => {
-  it("should process data with pipe", () => {
+  it("fp-ts functions are curried", () => {
+    const input = [1, 2, 3];
+    const double = (i: number) => i * 2;
+
+    // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
+
+    const result = A.map(double);
+
+    // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
+
+    expect(result).toEqual([2, 4, 6]);
+  });
+
+  it.todo("pipe function allows you to process data sequentially", () => {
     const input = "20";
     const parseNumber = (raw: string) => parseInt(raw, 10);
 
@@ -21,15 +37,9 @@ describe("Basics", () => {
     expect(resultWithPipe).toEqual(result);
   });
 
-  it.todo("you can pipe as much as you want", () => {
-    const input = "20";
-    const parseNumber = (raw: string) => parseInt(raw, 10);
-    const increment = (i: number) => i + 1;
+  it.todo("use pipe with curried functions for better readability", () => {
+    const input = [1, 2, 3];
     const double = (i: number) => i * 2;
-
-    const value = parseNumber(input);
-    const incrementedValue = increment(value);
-    const result = double(incrementedValue);
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
@@ -37,17 +47,12 @@ describe("Basics", () => {
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
-    expect(resultWithPipe).toEqual(result);
+    expect(resultWithPipe).toEqual([2, 4, 6]);
   });
 
-  it.todo("you can use lambda directly in your pipe", () => {
-    const input = "20";
-    const parseNumber = (raw: string) => parseInt(raw, 10);
-    const double = (i: number) => i * 2;
-
-    const value = parseNumber(input);
-    const incrementedValue = value + 5;
-    const result = double(incrementedValue);
+  it.todo("filter an array", () => {
+    const input = [1, 2, 3];
+    const isOdd = (i: number) => i % 2 !== 0;
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
@@ -55,6 +60,19 @@ describe("Basics", () => {
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
-    expect(resultWithPipe).toEqual(result);
+    expect(resultWithPipe).toEqual([1, 3]);
+  });
+
+  it.todo("flatMap an array", () => {
+    const input = [1, 2, 3];
+    const clone = (i: number) => [i, i];
+
+    // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
+
+    const resultWithPipe = pipe(input, TO_REPLACE);
+
+    // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
+
+    expect(resultWithPipe).toEqual([1, 1, 2, 2, 3, 3]);
   });
 });
