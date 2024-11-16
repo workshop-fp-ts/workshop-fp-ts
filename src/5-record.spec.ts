@@ -30,6 +30,7 @@ describe("Record", () => {
     expect(record["a"]).toEqual(3);
     expect(record["b"]).toEqual(2);
   });
+
   it.todo("You can get an array of tuples from a record", () => {
     const record = {
       b: 2,
@@ -46,9 +47,10 @@ describe("Record", () => {
       expect.objectContaining([
         ["a", 3],
         ["b", 2],
-      ])
+      ]),
     );
   });
+
   it.todo("You can map values of record's entries", () => {
     const isEven = (x: number) => x % 2 === 0;
 
@@ -71,9 +73,10 @@ describe("Record", () => {
         b: true,
         c: false,
         d: true,
-      })
+      }),
     );
   });
+
   it.todo(
     "You can filter records, keeping only entries with a value that satisfies a predicate",
     () => {
@@ -91,8 +94,9 @@ describe("Record", () => {
       // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
       expect(result).toEqual(expect.objectContaining({ b: 2 }));
-    }
+    },
   );
+
   it.todo(
     "You can filter records of Options, keeping only the Some values",
     () => {
@@ -108,8 +112,9 @@ describe("Record", () => {
       // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
       expect(result).toEqual(expect.objectContaining({ a: 3 }));
-    }
+    },
   );
+
   it.todo(
     "You can filter records with values satisfying a predicate and map the retained values",
     () => {
@@ -129,10 +134,11 @@ describe("Record", () => {
       // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
       expect(result).toEqual(
-        expect.objectContaining({ a: "6 is even", c: "8 is even" })
+        expect.objectContaining({ a: "6 is even", c: "8 is even" }),
       );
-    }
+    },
   );
+
   it.todo(
     "You can take a Record of functions and a value to produce a Record with the processed input",
     () => {
@@ -162,40 +168,40 @@ describe("Record", () => {
           username: "Richard",
           email: "richardgmail.com",
           age: 18,
-        })
+        }),
       ).toEqual(
         expect.objectContaining({
           validUsername: true,
           validEmail: false,
           validAge: true,
-        })
+        }),
       );
       expect(
         validateUser({
           username: "Jo",
           email: "jo@gmail.com",
           age: 20,
-        })
+        }),
       ).toEqual(
         expect.objectContaining({
           validUsername: false,
           validEmail: true,
           validAge: true,
-        })
+        }),
       );
       expect(
         validateUser({
           username: "Jordy",
           email: "jo@gmail.com",
           age: 12,
-        })
+        }),
       ).toEqual(
         expect.objectContaining({
           validUsername: true,
           validEmail: true,
           validAge: false,
-        })
+        }),
       );
-    }
+    },
   );
 });

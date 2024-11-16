@@ -12,8 +12,8 @@ import { TO_REPLACE, mockBooksApi, releaseBooksApiMock } from "./utils";
  * Task is used to represent an asynchronous operation.
  * It is quite similar to Promises in JavaScript except for those two differences:
  *
- *  - A task is lazy, meaning it won't be executed right away
  *  - A task (by convention) never fails
+ *  - A task is lazy, meaning it won't be executed right away
  *
  * In fact a task is simply a function returning a promise.
  *
@@ -75,7 +75,7 @@ describe("Task", () => {
   it.todo("More concrete example: wrapping fetch within a Task", () => {
     const getAuthorsTask: T.Task<Author[]> = () =>
       fetch("https://my-books-library.com/authors.json").then(
-        (response) => response.json() as any
+        (response) => response.json() as any,
       );
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
@@ -90,14 +90,14 @@ describe("Task", () => {
   it.todo("Chaining tasks", () => {
     const getFavoriteAuthorTask: T.Task<Author> = () =>
       fetch("https://my-books-library.com/authors/favorite.json").then(
-        (response) => response.json() as any
+        (response) => response.json() as any,
       );
 
     const getAuthorBooks =
       (authorId: number): T.Task<string[]> =>
       () =>
         fetch(`https://my-books-library.com/authors/${authorId}.json`).then(
-          (response) => response.json() as any
+          (response) => response.json() as any,
         );
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
@@ -115,14 +115,14 @@ describe("Task", () => {
   it.todo("Combining several tasks", () => {
     const getAuthorsTask: T.Task<Author[]> = () =>
       fetch("https://my-books-library.com/authors.json").then(
-        (response) => response.json() as any
+        (response) => response.json() as any,
       );
 
     const getAuthorBooks =
       (authorId: number): T.Task<string[]> =>
       () =>
         fetch(`https://my-books-library.com/authors/${authorId}.json`).then(
-          (response) => response.json() as any
+          (response) => response.json() as any,
         );
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
@@ -177,17 +177,17 @@ describe("TaskEither", () => {
 
     const getAuthorBooks = (authorId) => () =>
       fetch(`https://my-books-library.com/authors/${authorId}.json`).then(
-        (response) => response.json() as any
+        (response) => response.json() as any,
       );
 
     // ⬆⬆⬆⬆ Fix code here ⬆⬆⬆⬆
 
     await expect(getAuthorBooks(1)).resolves.toEqual(
-      E.right(["Les Misérables", "Le Dernier Jour d'un condamné"])
+      E.right(["Les Misérables", "Le Dernier Jour d'un condamné"]),
     );
     await expect(getAuthorBooks(3)).resolves.toEqual(E.left("NOT FOUND"));
     await expect(getAuthorBooks("invalidId")).resolves.toEqual(
-      E.left("BAD REQUEST")
+      E.left("BAD REQUEST"),
     );
   });
 });

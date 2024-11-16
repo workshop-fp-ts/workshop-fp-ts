@@ -30,7 +30,7 @@ import { TO_REPLACE } from "./utils";
  */
 
 describe("Either", () => {
-  it.todo("With E.map, you can transform the Right value of an Either", () => {
+  it.todo("You can transform the Right value of an Either", () => {
     const input = E.right(1);
     const double = (i: number) => i * 2;
 
@@ -43,21 +43,18 @@ describe("Either", () => {
     expect(result).toEqual(E.right(2));
   });
 
-  it.todo(
-    "With E.mapLeft, you can transform the Left value of an Either",
-    () => {
-      const input = E.left(1);
-      const double = (i: number) => i * 2;
+  it.todo("You can also transform the Left value of an Either", () => {
+    const input = E.left(1);
+    const double = (i: number) => i * 2;
 
-      // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
+    // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-      const result = pipe(input, TO_REPLACE);
+    const result = pipe(input, TO_REPLACE);
 
-      // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
+    // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
-      expect(result).toEqual(E.left(2));
-    }
-  );
+    expect(result).toEqual(E.left(2));
+  });
 
   it.todo("You can create a Either from a nullable value", () => {
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
@@ -69,35 +66,6 @@ describe("Either", () => {
     expect(toEither(2)).toEqual(E.right(2));
     expect(toEither(null)).toEqual(E.left("No value provided"));
   });
-
-  it.todo("You can create a Either from an Option", () => {
-    // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
-
-    const toEither = (n: O.Option<number>) => pipe(n, TO_REPLACE);
-
-    // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
-
-    expect(toEither(O.some(2))).toEqual(E.right(2));
-    expect(toEither(O.none)).toEqual(E.left("No value provided"));
-  });
-
-  it.todo(
-    "With E.fromPredicate, you can conditionnaly create a Left or a Right",
-    () => {
-      const isEven = (i: number) => i % 2 === 0;
-
-      // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
-
-      const onlyEvenNumbers = (n: number) => pipe(n, TO_REPLACE);
-
-      // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
-
-      expect(onlyEvenNumbers(2)).toEqual(E.right(2));
-      expect(onlyEvenNumbers(8)).toEqual(E.right(8));
-      expect(onlyEvenNumbers(1)).toEqual(E.left("1 is not even"));
-      expect(onlyEvenNumbers(5)).toEqual(E.left("5 is not even"));
-    }
-  );
 
   it.todo(
     "You can extract a value, providing a default value in case of left",
@@ -112,17 +80,19 @@ describe("Either", () => {
       expect(getValue(E.right(17))).toEqual(17);
       expect(getValue(E.left("error"))).toEqual(-1);
       expect(getValue(E.left("another error"))).toEqual(-1);
-    }
+    },
   );
+});
 
-  it.todo("You can flatten nested Eithers", () => {
+describe("Either – Advanced exercises", () => {
+  it.todo("You can flatten nested Either", () => {
     const keepOnlyEven = E.fromPredicate(
       (n: number) => n % 2 === 0,
-      () => "Not a multiple of 2"
+      () => "Not a multiple of 2",
     );
     const keepOnlyMultiplesOf3 = E.fromPredicate(
       (n: number) => n % 3 === 0,
-      () => "Not a multiple of 3"
+      () => "Not a multiple of 3",
     );
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
@@ -137,19 +107,17 @@ describe("Either", () => {
     expect(keepOnlyMultiplesOf6(2)).toEqual(E.left("Not a multiple of 6"));
     expect(keepOnlyMultiplesOf6(8)).toEqual(E.left("Not a multiple of 6"));
   });
-});
 
-describe("Either – Advanced exercises", () => {
   type UserCreationDto = { username: string; email: string; age: number };
 
-  it.todo("Obtain the desired value by using all functions", () => {
+  it("Obtain the desired value by using all functions", () => {
     const validateUsername = (user: UserCreationDto) =>
       pipe(
         user,
         E.fromPredicate(
           (user) => user.username.length > 3,
-          () => "invalid_username"
-        )
+          () => "invalid_username",
+        ),
       );
 
     const hasValidEmail = (user: UserCreationDto): boolean =>
@@ -170,7 +138,7 @@ describe("Either – Advanced exercises", () => {
         username: "Richard",
         email: "richardgmail.com",
         age: 18,
-      })
+      }),
     ).toEqual(E.left("invalid_email"));
 
     expect(
@@ -178,7 +146,7 @@ describe("Either – Advanced exercises", () => {
         username: "Jo",
         email: "jo@gmail.com",
         age: 20,
-      })
+      }),
     ).toEqual(E.left("invalid_username"));
 
     expect(
@@ -186,7 +154,7 @@ describe("Either – Advanced exercises", () => {
         username: "Jordy",
         email: "jo@gmail.com",
         age: 12,
-      })
+      }),
     ).toEqual(E.left("underage"));
   });
 });

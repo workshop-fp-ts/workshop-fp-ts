@@ -19,7 +19,7 @@ describe("Reader", () => {
       (cursor: number) =>
         pipe(
           authorClient.getAll(),
-          TE.map(A.filter((author) => author.id > cursor))
+          TE.map(A.filter((author) => author.id > cursor)),
         );
     const buildUpsertAuthors_PartialApplication =
       ({ authorRepository }: { authorRepository: AuthorRepository }) =>
@@ -27,7 +27,7 @@ describe("Reader", () => {
         pipe(
           authors,
           A.map(authorRepository.upsert),
-          A.sequence(TE.ApplicativeSeq)
+          A.sequence(TE.ApplicativeSeq),
         );
     const buildSync_PartialApplication = ({
       authorClient,
@@ -100,7 +100,7 @@ const resetFakeAuthorRepositoryData = () => {
 const fakeAuthorRepository: AuthorRepository = {
   upsert: (authorToUpsert) => {
     const foundAuthor = fakeAuthorRepositoryData.find(
-      (author) => author.id === authorToUpsert.id
+      (author) => author.id === authorToUpsert.id,
     );
     if (!foundAuthor) {
       fakeAuthorRepositoryData = [...fakeAuthorRepositoryData, authorToUpsert];
