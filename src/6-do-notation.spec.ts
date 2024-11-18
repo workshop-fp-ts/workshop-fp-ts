@@ -7,7 +7,7 @@ import { TO_REPLACE } from "./utils";
 /**
  * https://gcanti.github.io/fp-ts/guides/do-notation.html
  *
- * Do notation can be used to simplify your code
+ * Do notation can be used to simplify your code, by creating a context and binding values in that context
  */
 describe("Do notation", () => {
   it.todo("The do notation help you create a context", async () => {

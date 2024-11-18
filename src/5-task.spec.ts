@@ -1,5 +1,6 @@
 import * as E from "fp-ts/Either";
 import * as TE from "fp-ts/TaskEither";
+import * as A from "fp-ts/Array";
 import * as T from "fp-ts/Task";
 import { pipe } from "fp-ts/function";
 import { fetch } from "undici";
@@ -182,11 +183,11 @@ describe("TaskEither", () => {
 
     // ⬆⬆⬆⬆ Fix code here ⬆⬆⬆⬆
 
-    await expect(getAuthorBooks(1)).resolves.toEqual(
+    await expect(getAuthorBooks(1)()).resolves.toEqual(
       E.right(["Les Misérables", "Le Dernier Jour d'un condamné"]),
     );
-    await expect(getAuthorBooks(3)).resolves.toEqual(E.left("NOT FOUND"));
-    await expect(getAuthorBooks("invalidId")).resolves.toEqual(
+    await expect(getAuthorBooks(3)()).resolves.toEqual(E.left("NOT FOUND"));
+    await expect(getAuthorBooks("invalidId")()).resolves.toEqual(
       E.left("BAD REQUEST"),
     );
   });
