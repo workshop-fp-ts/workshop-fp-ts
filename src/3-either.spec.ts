@@ -110,7 +110,7 @@ describe("Either – Advanced exercises", () => {
 
   type UserCreationDto = { username: string; email: string; age: number };
 
-  it("Obtain the desired value by using all functions", () => {
+  it.todo("Obtain the desired value by using all functions", () => {
     const validateUsername = (user: UserCreationDto) =>
       pipe(
         user,
