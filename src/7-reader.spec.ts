@@ -1,8 +1,8 @@
 import * as A from "fp-ts/Array";
 import * as TE from "fp-ts/TaskEither";
+import * as RTE from "fp-ts/ReaderTaskEither";
 import { pipe } from "fp-ts/function";
 import { describe, expect, it } from "vitest";
-import { TO_REPLACE } from "./utils";
 
 /**
  * https://gcanti.github.io/fp-ts/modules/Reader.ts.html
@@ -13,13 +13,13 @@ import { TO_REPLACE } from "./utils";
  */
 
 describe("Reader", () => {
-  it.todo("The reader monad help you inject dependencies", async () => {
+  it("The reader monad help you inject dependencies", async () => {
     const buildGetAuthors_PartialApplication =
       ({ authorClient }: { authorClient: AuthorClient }) =>
       (cursor: number) =>
         pipe(
           authorClient.getAll(),
-          TE.map(A.filter((author) => author.id > cursor)),
+          TE.map(A.filter((author) => author.id > cursor))
         );
     const buildUpsertAuthors_PartialApplication =
       ({ authorRepository }: { authorRepository: AuthorRepository }) =>
@@ -27,7 +27,7 @@ describe("Reader", () => {
         pipe(
           authors,
           A.map(authorRepository.upsert),
-          A.sequence(TE.ApplicativeSeq),
+          A.sequence(TE.ApplicativeSeq)
         );
     const buildSync_PartialApplication = ({
       authorClient,
@@ -43,9 +43,28 @@ describe("Reader", () => {
     };
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
+    const buildGetAuthors_Reader =
+      (cursor: number) =>
+      ({ authorClient }: { authorClient: AuthorClient }) =>
+        pipe(
+          authorClient.getAll(),
+          TE.map(A.filter((author) => author.id > cursor))
+        );
 
-    const sync_Reader = (cursor: number) => pipe(TO_REPLACE);
+    const buildUpsertAuthors_Reader =
+      (authors: Author[]) =>
+      ({ authorRepository }: { authorRepository: AuthorRepository }) =>
+        pipe(
+          authors,
+          A.map(authorRepository.upsert),
+          A.sequence(TE.ApplicativeSeq)
+        );
 
+    const sync_Reader = (cursor: number) =>
+      pipe(
+        buildGetAuthors_Reader(cursor),
+        RTE.flatMap(buildUpsertAuthors_Reader)
+      );
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
     // IOC
@@ -100,7 +119,7 @@ const resetFakeAuthorRepositoryData = () => {
 const fakeAuthorRepository: AuthorRepository = {
   upsert: (authorToUpsert) => {
     const foundAuthor = fakeAuthorRepositoryData.find(
-      (author) => author.id === authorToUpsert.id,
+      (author) => author.id === authorToUpsert.id
     );
     if (!foundAuthor) {
       fakeAuthorRepositoryData = [...fakeAuthorRepositoryData, authorToUpsert];

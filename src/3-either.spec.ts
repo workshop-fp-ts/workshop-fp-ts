@@ -1,9 +1,7 @@
-import * as A from "fp-ts/Array";
 import * as E from "fp-ts/Either";
-import * as O from "fp-ts/Option";
 import { pipe } from "fp-ts/function";
-import { expect, describe, it } from "vitest";
-import { TO_REPLACE } from "./utils";
+import { not } from "fp-ts/lib/Predicate";
+import { describe, expect, it } from "vitest";
 
 /**
  * https://gcanti.github.io/fp-ts/modules/Either.ts.html
@@ -30,36 +28,37 @@ import { TO_REPLACE } from "./utils";
  */
 
 describe("Either", () => {
-  it.todo("You can transform the Right value of an Either", () => {
+  it("You can transform the Right value of an Either", () => {
     const input = E.right(1);
     const double = (i: number) => i * 2;
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const result = pipe(input, TO_REPLACE);
+    const result = pipe(input, E.map(double));
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
     expect(result).toEqual(E.right(2));
   });
 
-  it.todo("You can also transform the Left value of an Either", () => {
+  it("You can also transform the Left value of an Either", () => {
     const input = E.left(1);
     const double = (i: number) => i * 2;
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const result = pipe(input, TO_REPLACE);
+    const result = pipe(input, E.mapLeft(double));
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
     expect(result).toEqual(E.left(2));
   });
 
-  it.todo("You can create a Either from a nullable value", () => {
+  it("You can create a Either from a nullable value", () => {
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const toEither = (n: number | null) => pipe(n, TO_REPLACE);
+    const toEither = (n: number | null) =>
+      pipe(n, E.fromNullable("No value provided"));
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -67,38 +66,44 @@ describe("Either", () => {
     expect(toEither(null)).toEqual(E.left("No value provided"));
   });
 
-  it.todo(
-    "You can extract a value, providing a default value in case of left",
-    () => {
-      // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
+  it("You can extract a value, providing a default value in case of left", () => {
+    // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-      const getValue = (n: E.Either<string, number>) => pipe(n, TO_REPLACE);
+    const getValue = (n: E.Either<string, number>) =>
+      pipe(
+        n,
+        E.getOrElse(() => -1)
+      );
 
-      // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
+    // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
-      expect(getValue(E.right(2))).toEqual(2);
-      expect(getValue(E.right(17))).toEqual(17);
-      expect(getValue(E.left("error"))).toEqual(-1);
-      expect(getValue(E.left("another error"))).toEqual(-1);
-    },
-  );
+    expect(getValue(E.right(2))).toEqual(2);
+    expect(getValue(E.right(17))).toEqual(17);
+    expect(getValue(E.left("error"))).toEqual(-1);
+    expect(getValue(E.left("another error"))).toEqual(-1);
+  });
 });
 
 describe("Either – Advanced exercises", () => {
-  it.todo("You can flatten nested Either", () => {
+  it("You can flatten nested Either", () => {
     const keepOnlyEven = E.fromPredicate(
       (n: number) => n % 2 === 0,
-      () => "Not a multiple of 2",
+      () => "Not a multiple of 2"
     );
     const keepOnlyMultiplesOf3 = E.fromPredicate(
       (n: number) => n % 3 === 0,
-      () => "Not a multiple of 3",
+      () => "Not a multiple of 3"
     );
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
     const keepOnlyMultiplesOf6 = (n: number) =>
-      pipe(n, keepOnlyEven, E.map(keepOnlyMultiplesOf3));
+      pipe(
+        n,
+        keepOnlyEven,
+        E.flatMap(keepOnlyMultiplesOf3),
+        E.mapLeft(() => "Not a multiple of 6")
+      );
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -110,14 +115,14 @@ describe("Either – Advanced exercises", () => {
 
   type UserCreationDto = { username: string; email: string; age: number };
 
-  it.todo("Obtain the desired value by using all functions", () => {
+  it("Obtain the desired value by using all functions", () => {
     const validateUsername = (user: UserCreationDto) =>
       pipe(
         user,
         E.fromPredicate(
           (user) => user.username.length > 3,
-          () => "invalid_username",
-        ),
+          () => "invalid_username"
+        )
       );
 
     const hasValidEmail = (user: UserCreationDto): boolean =>
@@ -128,7 +133,11 @@ describe("Either – Advanced exercises", () => {
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
     const validateUser = (user: UserCreationDto) => {
-      // TODO
+      return pipe(
+        validateUsername(user),
+        E.filterOrElse(hasValidEmail, () => "invalid_email"),
+        E.filterOrElse(not(isUnderage), () => "underage")
+      );
     };
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
@@ -138,7 +147,7 @@ describe("Either – Advanced exercises", () => {
         username: "Richard",
         email: "richardgmail.com",
         age: 18,
-      }),
+      })
     ).toEqual(E.left("invalid_email"));
 
     expect(
@@ -146,7 +155,7 @@ describe("Either – Advanced exercises", () => {
         username: "Jo",
         email: "jo@gmail.com",
         age: 20,
-      }),
+      })
     ).toEqual(E.left("invalid_username"));
 
     expect(
@@ -154,7 +163,7 @@ describe("Either – Advanced exercises", () => {
         username: "Jordy",
         email: "jo@gmail.com",
         age: 12,
-      }),
+      })
     ).toEqual(E.left("underage"));
   });
 });

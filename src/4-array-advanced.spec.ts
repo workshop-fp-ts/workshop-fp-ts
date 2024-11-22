@@ -1,8 +1,12 @@
+import { json } from "fp-ts";
 import * as A from "fp-ts/Array";
+import * as Eq from "fp-ts/Eq";
 import * as NEA from "fp-ts/NonEmptyArray";
-import { pipe } from "fp-ts/function";
+import * as O from "fp-ts/Option";
+import * as Ord from "fp-ts/Ord";
+import { flow, pipe } from "fp-ts/function";
+import * as N from "fp-ts/number";
 import { describe, expect, it } from "vitest";
-import { TO_REPLACE } from "./utils";
 
 /**
  * Now that we've seen some basic functions, we can go deeper into array functions and how
@@ -16,7 +20,7 @@ describe("Array Advanced", () => {
    * You can use the Json module for this test:
    * https://gcanti.github.io/fp-ts/modules/Json.ts.html
    */
-  it.todo("should filter and map an array at the same time", () => {
+  it("should filter and map an array at the same time", () => {
     const input = ["{invalid json}", '{"hello": "filterMap"}'];
 
     // We want to do the same as:
@@ -31,14 +35,17 @@ describe("Array Advanced", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const resultWithPipe = pipe(input, TO_REPLACE);
+    const resultWithPipe = pipe(
+      input,
+      A.filterMap(flow(json.parse, O.fromEither))
+    );
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
     expect(resultWithPipe).toEqual(result);
   });
 
-  it.todo.each`
+  it.each`
     input                         | case
     ${["green", "yellow", "red"]} | ${"when value is found"}
     ${["green", "red"]}           | ${"when value is not found"}
@@ -51,47 +58,56 @@ describe("Array Advanced", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const resultWithPipe = pipe(input, TO_REPLACE);
+    const resultWithPipe = pipe(
+      input,
+      A.findFirst(isYellow),
+      O.map(toStone),
+      O.toUndefined
+    );
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
     expect(resultWithPipe).toEqual(result);
   });
 
-  it.todo(
-    "should separate a list of items in 2 groups according to a predicate",
-    () => {
-      type InvalidResult = { success: false; message: string };
-      type ValidResult = { success: true; data: number };
-      type Result = ValidResult | InvalidResult;
-      const input: Result[] = [
-        { success: false, message: "foo is not a number" },
+  it("should separate a list of items in 2 groups according to a predicate", () => {
+    type InvalidResult = { success: false; message: string };
+    type ValidResult = { success: true; data: number };
+    type Result = ValidResult | InvalidResult;
+    const input: Result[] = [
+      { success: false, message: "foo is not a number" },
+      { success: true, data: 11 },
+      { success: false, message: "another error message" },
+      { success: true, data: 31 },
+    ];
+    const isValidResult = (d: Result): d is ValidResult => d.success;
+
+    // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
+
+    const resultWithPipe = pipe(
+      input,
+      A.partition(isValidResult),
+      ({ left, right }) => ({
+        items: right,
+        errors: left,
+      })
+    );
+
+    // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
+
+    expect(resultWithPipe).toEqual({
+      items: [
         { success: true, data: 11 },
-        { success: false, message: "another error message" },
         { success: true, data: 31 },
-      ];
-      const isValidResult = (d: Result): d is ValidResult => d.success;
+      ],
+      errors: [
+        { success: false, message: "foo is not a number" },
+        { success: false, message: "another error message" },
+      ],
+    });
+  });
 
-      // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
-
-      const resultWithPipe = pipe(input, TO_REPLACE);
-
-      // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
-
-      expect(resultWithPipe).toEqual({
-        items: [
-          { success: true, data: 11 },
-          { success: true, data: 31 },
-        ],
-        errors: [
-          { success: false, message: "foo is not a number" },
-          { success: false, message: "another error message" },
-        ],
-      });
-    },
-  );
-
-  it.todo("should find item in a list", () => {
+  it("should find item in a list", () => {
     const input = [
       { position: 3, message: "foo" },
       { position: 11, message: "bar" },
@@ -109,14 +125,19 @@ describe("Array Advanced", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const resultWithPipe = pipe(input, TO_REPLACE);
+    const resultWithPipe = pipe(
+      input,
+      A.findFirst(isFooItem),
+      O.map((a) => a.position + 1),
+      O.getOrElse(() => 0)
+    );
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
     expect(resultWithPipe).toEqual(result);
   });
 
-  it.todo.each`
+  it.each`
     input     | case
     ${[]}     | ${"when array is empty"}
     ${[3, 9]} | ${"when array is not empty"}
@@ -126,7 +147,7 @@ describe("Array Advanced", () => {
       const unsafeFunctionWithArray = (values: NEA.NonEmptyArray<number>) =>
         pipe(
           values,
-          A.map((value) => value / values.length),
+          A.map((value) => value / values.length)
         );
 
       let result = [] as number[];
@@ -136,15 +157,20 @@ describe("Array Advanced", () => {
 
       // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-      const resultWithPipe = pipe(input, TO_REPLACE);
+      const resultWithPipe = pipe(
+        input,
+        NEA.fromArray,
+        O.map(unsafeFunctionWithArray),
+        O.getOrElse(() => [] as number[])
+      );
 
       // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
       expect(resultWithPipe).toEqual(result);
-    },
+    }
   );
 
-  it.todo("should dedupe items in a list", () => {
+  it("should dedupe items in a list", () => {
     const input = [
       { position: 4 },
       { position: 1 },
@@ -157,7 +183,15 @@ describe("Array Advanced", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const resultWithPipe = pipe(input, TO_REPLACE);
+    const resultWithPipe = pipe(
+      input,
+      A.uniq(
+        pipe(
+          N.Eq,
+          Eq.contramap((item) => item.position)
+        )
+      )
+    );
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -169,19 +203,19 @@ describe("Array Advanced", () => {
     ]);
   });
 
-  it.todo("should sort simple items in a list", () => {
+  it("should sort simple items in a list", () => {
     const input = [1, 3, 6, 8, 3];
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const resultWithPipe = pipe(input, TO_REPLACE);
+    const resultWithPipe = pipe(input, A.sort(N.Ord));
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
     expect(resultWithPipe).toEqual([1, 3, 3, 6, 8]);
   });
 
-  it.todo("should sort objects in a list", () => {
+  it("should sort objects in a list", () => {
     const input = [
       { position: 4 },
       { position: 1 },
@@ -191,7 +225,15 @@ describe("Array Advanced", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const resultWithPipe = pipe(input, TO_REPLACE);
+    const resultWithPipe = pipe(
+      input,
+      A.sort(
+        pipe(
+          N.Ord,
+          Ord.contramap<number, { position: number }>((item) => item.position)
+        )
+      )
+    );
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 

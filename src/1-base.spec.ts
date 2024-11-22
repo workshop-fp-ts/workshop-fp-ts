@@ -1,7 +1,6 @@
-import { pipe } from "fp-ts/function";
-import { expect, describe, it } from "vitest";
-import { TO_REPLACE } from "./utils";
 import * as A from "fp-ts/Array";
+import { pipe } from "fp-ts/function";
+import { describe, expect, it } from "vitest";
 
 /**
  * In this section, we will cover the pipe function that we will use a lot in this workshop
@@ -15,14 +14,14 @@ describe("Basics", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const result = A.map(double);
+    const result = A.map(double)(input);
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
     expect(result).toEqual([2, 4, 6]);
   });
 
-  it.todo("pipe function allows you to process data sequentially", () => {
+  it("pipe function allows you to process data sequentially", () => {
     const input = "20";
     const parseNumber = (raw: string) => parseInt(raw, 10);
 
@@ -30,46 +29,46 @@ describe("Basics", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const resultWithPipe = pipe(input, TO_REPLACE);
+    const resultWithPipe = pipe(input, parseNumber);
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
     expect(resultWithPipe).toEqual(result);
   });
 
-  it.todo("use pipe with curried functions for better readability", () => {
+  it("use pipe with curried functions for better readability", () => {
     const input = [1, 2, 3];
     const double = (i: number) => i * 2;
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const resultWithPipe = pipe(input, TO_REPLACE);
+    const resultWithPipe = pipe(input, A.map(double));
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
     expect(resultWithPipe).toEqual([2, 4, 6]);
   });
 
-  it.todo("filter an array", () => {
+  it("filter an array", () => {
     const input = [1, 2, 3];
     const isOdd = (i: number) => i % 2 !== 0;
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const resultWithPipe = pipe(input, TO_REPLACE);
+    const resultWithPipe = pipe(input, A.filter(isOdd));
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
     expect(resultWithPipe).toEqual([1, 3]);
   });
 
-  it.todo("flatMap an array", () => {
+  it("flatMap an array", () => {
     const input = [1, 2, 3];
     const clone = (i: number) => [i, i];
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const resultWithPipe = pipe(input, TO_REPLACE);
+    const resultWithPipe = pipe(input, A.flatMap(clone));
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 

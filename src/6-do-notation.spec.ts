@@ -10,7 +10,7 @@ import { TO_REPLACE } from "./utils";
  * Do notation can be used to simplify your code, by creating a context and binding values in that context
  */
 describe("Do notation", () => {
-  it.todo("The do notation help you create a context", async () => {
+  it("The do notation help you create a context", async () => {
     const authorId = 42;
 
     const taskToSimplify = pipe(
@@ -18,23 +18,25 @@ describe("Do notation", () => {
       T.flatMap((author) =>
         pipe(
           getBooksByAuthor(author.id),
-          T.map((books) => ({ author, books })),
-        ),
+          T.map((books) => ({ author, books }))
+        )
       ),
       T.flatMap(({ author, books }) =>
         pipe(
           getSimilarAuthors(author.id),
-          T.map((similarAuthors) => ({ author, books, similarAuthors })),
-        ),
+          T.map((similarAuthors) => ({ author, books, similarAuthors }))
+        )
       ),
-      T.map(toAuthorDto),
+      T.map(toAuthorDto)
     );
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
     const taskWithDoNotation = pipe(
       getAuthor(authorId),
-      TO_REPLACE,
-      T.map(toAuthorDto),
+      T.bindTo("author"),
+      T.bind("books", ({ author }) => getBooksByAuthor(author.id)),
+      T.bind("similarAuthors", ({ author }) => getSimilarAuthors(author.id)),
+      T.map(toAuthorDto)
     );
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -93,6 +95,6 @@ const toAuthorDto = ({
   booksCount: books.length,
   recommendedAuthors: pipe(
     similarAuthors,
-    A.map((author) => author.name),
+    A.map((author) => author.name)
   ),
 });
